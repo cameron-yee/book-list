@@ -9,13 +9,15 @@ import (
 )
 
 type Book struct {
-    Title         string  `json:"title"`
-    Series        string  `json:"series"`
-    Author        string  `json:"author"`
-    RecommendedBy string  `json:"recommendedBy"`
-    Read          bool    `json:"read"`
-    Owned         bool    `json:"owned"`
-    Genre         string  `json:"genre"`
+    Title         string    `json:"title"`
+    Series        string    `json:"series"`
+    Author        string    `json:"author"`
+    ReadingList  string    `json:"readingList"`
+    RecommendedBy string    `json:"recommendedBy"`
+    Read          bool      `json:"read"`
+    Owned         bool      `json:"owned"`
+    Genre         string    `json:"genre"`
+    EntryOwner    string    `json:"entryOwner"`
 }
 
 type Books struct {
@@ -43,10 +45,12 @@ func printBook(book Book) {
     colorPrintString("Title", book.Title)
     colorPrintString("Series", book.Series)
     colorPrintString("Author", book.Author)
+    colorPrintString("ReadingList", book.ReadingList)
     colorPrintString("Recommended By", book.RecommendedBy)
     colorPrintBool("Read", book.Read)
     colorPrintBool("Owned", book.Owned)
     colorPrintString("Genre", book.Genre)
+    colorPrintString("EntryOwner", book.EntryOwner)
     fmt.Println("-------------------------------------------------------------")
 }
 
@@ -86,6 +90,7 @@ func addBook() {
     title := getInput("Title")
     series := getInput("Series")
     author := getInput("Author")
+    reading_list := getInput("Reading List")
     recommended_by := getInput("Recommended By")
     
     read := getInput("Read")
@@ -101,15 +106,18 @@ func addBook() {
     }
     
     genre := getInput("Genre")
+    entry_owner := getInput("Entry Owner")
 
     var new_book *Book = &Book{
         Title: title,
         Series: series,
         Author: author,
+        ReadingList: reading_list,
         RecommendedBy: recommended_by,
         Read: read_bool,
         Owned: owned_bool,
         Genre: genre,
+        EntryOwner: entry_owner,
     }
 
     appendBook(new_book)
@@ -123,6 +131,8 @@ func runUpdate(book_title, field, value string) {
             updateBookSeries(book_title, value)
         case "author":
             updateBookAuthor(book_title, value)
+        case "readinglist":
+            updateBookReadingList(book_title, value)
         case "recommendedby":
             updateBookRecommendedBy(book_title, value)
         case "read":
@@ -133,6 +143,8 @@ func runUpdate(book_title, field, value string) {
             updateBookOwned(book_title, value_as_bool)
         case "genre":
             updateBookGenre(book_title, value)
+        case "entryowner":
+            updateBookEntryOwner(book_title, value)
         default:
             fmt.Print("Option not set up.")
     }
@@ -179,6 +191,22 @@ func updateBookAuthor(book_title, author_value string) {
     for i := 0; i < len(my_books); i++ {
         if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
             my_books[i].Author = author_value
+            break
+        }
+    }
+    
+    writeBooks(books)
+}
+
+func updateBookReadingList(book_title, reading_list_value string) {
+    var books Books
+    books = readBooks()
+    
+    var my_books []Book = books.Books
+
+    for i := 0; i < len(my_books); i++ {
+        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
+            my_books[i].ReadingList = reading_list_value
             break
         }
     }
@@ -243,6 +271,22 @@ func updateBookGenre(book_title, genre_value string) {
     for i := 0; i < len(my_books); i++ {
         if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
             my_books[i].Genre = genre_value
+            break
+        }
+    }
+    
+    writeBooks(books)
+}
+
+func updateBookEntryOwner(book_title, entry_owner_value string) {
+    var books Books
+    books = readBooks()
+    
+    var my_books []Book = books.Books
+
+    for i := 0; i < len(my_books); i++ {
+        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
+            my_books[i].EntryOwner = entry_owner_value
             break
         }
     }
