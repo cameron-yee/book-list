@@ -4,6 +4,7 @@ import (
     "strings"
 )
 
+
 func runSearch(label, search_term string) {
     switch strings.ToLower(label) {
         case "series":
@@ -29,85 +30,71 @@ func runFilter(label string, value bool) {
 }
 
 func filterOwned(value bool) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if my_books[i].Owned == value {
-            printBook(my_books[i])
+    for i := 0; i < len(books); i++ {
+        if books[i].Owned == value {
+            printBook(books[i])
         }
     }
 }
 
 func filterRead(value bool) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if my_books[i].Read == value {
-            printBook(my_books[i])
+    for i := 0; i < len(books); i++ {
+        if books[i].Read == value {
+            printBook(books[i])
         }
     }
 }
 
 func searchTitle(search_term string) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.Contains(strings.ToLower(my_books[i].Title), strings.ToLower(search_term)) {
-            printBook(my_books[i])            
+    for i := 0; i < len(books); i++ {
+        if strings.Contains(strings.ToLower(books[i].Title), strings.ToLower(search_term)) {
+            printBook(books[i])            
         }
     }
 }
 
 func searchSeries(search_term string) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.Contains(strings.ToLower(my_books[i].Series), strings.ToLower(search_term)) {
-            printBook(my_books[i])
+    for i := 0; i < len(books); i++ {
+        if strings.Contains(strings.ToLower(books[i].Series), strings.ToLower(search_term)) {
+            printBook(books[i])
         }
     }
 }
 
 func searchAuthor(search_term string) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.Contains(strings.ToLower(my_books[i].Author), strings.ToLower(search_term)) {
-            printBook(my_books[i])            
+    for i := 0; i < len(books); i++ {
+        if strings.Contains(strings.ToLower(books[i].Author), strings.ToLower(search_term)) {
+            printBook(books[i])            
         }
     }
 }
 
 func searchRecommendedBy(search_term string) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.Contains(strings.ToLower(my_books[i].RecommendedBy), strings.ToLower(search_term)) {
-            printBook(my_books[i])            
+    for i := 0; i < len(books); i++ {
+        if strings.Contains(strings.ToLower(books[i].RecommendedBy), strings.ToLower(search_term)) {
+            printBook(books[i])            
         }
     }
 }
 
 func searchGenre(search_term string) {
-    var books Books
-    books = readBooks()
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.Contains(strings.ToLower(my_books[i].Genre), strings.ToLower(search_term)) {
-            printBook(my_books[i])            
+    for i := 0; i < len(books); i++ {
+        if strings.Contains(strings.ToLower(books[i].Genre), strings.ToLower(search_term)) {
+            printBook(books[i])            
         }
     }
 }

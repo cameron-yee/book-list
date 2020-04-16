@@ -12,7 +12,7 @@ type Book struct {
     Title         string    `json:"title"`
     Series        string    `json:"series"`
     Author        string    `json:"author"`
-    ReadingList  string    `json:"readingList"`
+    ReadingList   string    `json:"readingList"`
     RecommendedBy string    `json:"recommendedBy"`
     Read          bool      `json:"read"`
     Owned         bool      `json:"owned"`
@@ -20,18 +20,17 @@ type Book struct {
     EntryOwner    string    `json:"entryOwner"`
 }
 
-type Books struct {
-    Books []Book `json:"books"`
-}
+// type Books struct {
+//     Books []Book `json:"books"`
+// }
 
-func readBooks() Books {
+func readBooks() []Book {
     data, err := ioutil.ReadFile("./books.json")
     if err != nil {
         panic(err)
     }
 
-
-    var books Books
+    var books []Book
 
     err = json.Unmarshal(data, &books)
     if err != nil {
@@ -55,18 +54,15 @@ func printBook(book Book) {
 }
 
 func listBooks() {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        printBook(my_books[i])
+    for i := 0; i < len(books); i++ {
+        printBook(books[i])
     }
 }
 
-func writeBooks(books Books) {
-    dataBytes, err := json.Marshal(books)
+func writeBooks(books *[]Book) {
+    dataBytes, err := json.Marshal((*books))
     if err != nil {
         panic(err)
     }
@@ -78,12 +74,11 @@ func writeBooks(books Books) {
 }
 
 func appendBook(book *Book) {
-    var books Books
-    books = readBooks()
+    var books []Book = readBooks()
     
-    books.Books = append(books.Books, *book)
+    books = append(books, *book)
 
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func addBook() {
@@ -151,163 +146,133 @@ func runUpdate(book_title, field, value string) {
 }  
 
 func updateBookTitle(book_title, title_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].Title = title_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].Title = title_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookSeries(book_title, series_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].Series = series_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].Series = series_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookAuthor(book_title, author_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].Author = author_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].Author = author_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookReadingList(book_title, reading_list_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].ReadingList = reading_list_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].ReadingList = reading_list_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookRecommendedBy(book_title, recommended_by_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].RecommendedBy = recommended_by_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].RecommendedBy = recommended_by_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookRead(book_title string, read_value bool) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].Read = read_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].Read = read_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookOwned(book_title string, owned_value bool) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].Owned = owned_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].Owned = owned_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookGenre(book_title, genre_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].Genre = genre_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].Genre = genre_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func updateBookEntryOwner(book_title, entry_owner_value string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
-    for i := 0; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
-            my_books[i].EntryOwner = entry_owner_value
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            books[i].EntryOwner = entry_owner_value
             break
         }
     }
     
-    writeBooks(books)
+    writeBooks(&books)
 }
 
 func deleteBook(book_title string) {
-    var books Books
-    books = readBooks()
-    
-    var my_books []Book = books.Books
+    var books []Book = readBooks()
 
     i := 0
-    for ; i < len(my_books); i++ {
-        if strings.ToLower(my_books[i].Title) == strings.ToLower(book_title) {
+    for ; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
             break
         }
     }
 
-    books.Books = append(books.Books[:i], books.Books[i+1:]...)
+    books = append(books[:i], books[i+1:]...)
     
-    writeBooks(books)
+    writeBooks(&books)
 }
