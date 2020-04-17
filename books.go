@@ -9,20 +9,16 @@ import (
 )
 
 type Book struct {
-    Title         string    `json:"title"`
-    Series        string    `json:"series"`
-    Author        string    `json:"author"`
-    ReadingList   string    `json:"readingList"`
-    RecommendedBy string    `json:"recommendedBy"`
-    Read          bool      `json:"read"`
-    Owned         bool      `json:"owned"`
-    Genre         string    `json:"genre"`
-    EntryOwner    string    `json:"entryOwner"`
+    Title         string               `json:"title"`
+    Series        string               `json:"series"`
+    Author        string               `json:"author"`
+    // ReadingLists  []ReadingList        `json:"readingLists"`
+    RecommendedBy string               `json:"recommendedBy"`
+    Read          bool                 `json:"read"`
+    Owned         bool                 `json:"owned"`
+    Genre         string               `json:"genre"`
+    EntryOwner    string               `json:"entryOwner"`
 }
-
-// type Books struct {
-//     Books []Book `json:"books"`
-// }
 
 func readBooks() []Book {
     data, err := ioutil.ReadFile("./books.json")
@@ -44,7 +40,7 @@ func printBook(book Book) {
     colorPrintString("Title", book.Title)
     colorPrintString("Series", book.Series)
     colorPrintString("Author", book.Author)
-    colorPrintString("ReadingList", book.ReadingList)
+    // colorPrintString("ReadingList", book.ReadingList)
     colorPrintString("Recommended By", book.RecommendedBy)
     colorPrintBool("Read", book.Read)
     colorPrintBool("Owned", book.Owned)
@@ -85,7 +81,7 @@ func addBook() {
     title := getInput("Title")
     series := getInput("Series")
     author := getInput("Author")
-    reading_list := getInput("Reading List")
+    // reading_list := getInput("Reading List")
     recommended_by := getInput("Recommended By")
     
     read := getInput("Read")
@@ -107,7 +103,7 @@ func addBook() {
         Title: title,
         Series: series,
         Author: author,
-        ReadingList: reading_list,
+        // ReadingList: reading_list,
         RecommendedBy: recommended_by,
         Read: read_bool,
         Owned: owned_bool,
@@ -126,8 +122,8 @@ func runUpdate(book_title, field, value string) {
             updateBookSeries(book_title, value)
         case "author":
             updateBookAuthor(book_title, value)
-        case "readinglist":
-            updateBookReadingList(book_title, value)
+        // case "readinglist":
+        //     updateBookReadingList(book_title, value)
         case "recommendedby":
             updateBookRecommendedBy(book_title, value)
         case "read":
@@ -184,18 +180,18 @@ func updateBookAuthor(book_title, author_value string) {
     writeBooks(&books)
 }
 
-func updateBookReadingList(book_title, reading_list_value string) {
-    var books []Book = readBooks()
+// func updateBookReadingList(book_title, reading_list_value string) {
+//     var books []Book = readBooks()
 
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].ReadingList = reading_list_value
-            break
-        }
-    }
+//     for i := 0; i < len(books); i++ {
+//         if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+//             books[i].ReadingList = reading_list_value
+//             break
+//         }
+//     }
     
-    writeBooks(&books)
-}
+//     writeBooks(&books)
+// }
 
 func updateBookRecommendedBy(book_title, recommended_by_value string) {
     var books []Book = readBooks()

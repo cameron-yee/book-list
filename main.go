@@ -4,6 +4,7 @@ import (
     "fmt"
     "os"
     "strconv"
+    "strings"
 )
 
 func help() {
@@ -17,6 +18,28 @@ func help() {
     fmt.Println("\tupdate: Update a book by providing a book title, a field, and the new value for the field.")
 }
 
+func runAdd(add_type string) {
+    switch strings.ToLower(add_type) {
+        case "readinglist":
+            addReadingList()
+        case "user":
+            addUser()
+        default:
+            addBook()
+    }
+}
+
+func runDelete(delete_type, value string) {
+    switch strings.ToLower(delete_type) {
+        case "readinglist":
+            deleteReadingList(value)
+        case "user":
+            deleteUser(value)
+        default:
+            deleteBook(value)
+    }
+}
+
 func main() {
     if len(os.Args) < 2 {
         help()
@@ -25,13 +48,17 @@ func main() {
 
     switch command := os.Args[1]; command {
         case "add":
-            addBook()
-        case "delete":
             if len(os.Args) != 3 {
-                panic("Please provide a book title to delete.")
+                panic("Please provide a type to add")
             } else {
-                deleteBook(os.Args[2])
-            } 
+                runAdd(os.Args[2])
+            }
+        case "delete":
+            if len(os.Args) != 4 {
+                panic("Please provide a type to delete and a value")
+            } else {
+                runDelete(os.Args[2], os.Args[3])
+            }
         case "filter":
             if len(os.Args) != 4 {
                 panic("Please provide a filter and value.")
