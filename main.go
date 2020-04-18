@@ -9,11 +9,11 @@ import (
 
 func help() {
     fmt.Println("Commands:")
-    fmt.Println("\tadd: Add a book.")
-    fmt.Println("\tdelete: Delete a book by supplying the book title.")
+    fmt.Println("\tadd: Add a book, readinglist, or user.")
+    fmt.Println("\tdelete: Delete a book, readinglist, or user.")
     fmt.Println("\tfilter: Filter based on bool property. Ex. ./main.go filter owned true")
     fmt.Println("\thelp: Print list of commands.")
-    fmt.Println("\tlist: List books.")
+    fmt.Println("\tlist: List books, readinglists, or users.")
     fmt.Println("\tsearch: Search based on string property. Ex. ./main.go search title Narnia")
     fmt.Println("\tupdate: Update a book by providing a book title, a field, and the new value for the field.")
 }
@@ -37,6 +37,17 @@ func runDelete(delete_type, value string) {
             deleteUser(value)
         default:
             deleteBook(value)
+    }
+}
+
+func runList(list_type string) {
+    switch strings.ToLower(list_type) {
+        case "readinglists":
+            listReadingLists()
+        case "users":
+            listUsers()
+        default:
+            listBooks()
     }
 }
 
@@ -71,7 +82,11 @@ func main() {
                 runFilter(os.Args[2], value)
             }
         case "list":
-            listBooks()
+            if len(os.Args) != 3 {
+                panic("Please provide a type to list")
+            } else {
+                runList(os.Args[2])
+            }
         case "search":
             if len(os.Args) != 4 {
                 panic("Please provide a search and value.")

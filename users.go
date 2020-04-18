@@ -2,6 +2,7 @@ package main
 
 import (
     "encoding/json"
+    "fmt"
     "io/ioutil"
     "strings"
 )
@@ -25,6 +26,24 @@ func readUsers() []User {
     }
 
     return users
+}
+
+func printUser(user User) {
+    colorPrintString("Username", user.Username)
+
+    for i := 0; i < len(user.ReadingLists); i++ {
+        colorPrintString("Reading List", user.ReadingLists[i])
+    }
+    
+    fmt.Println("-------------------------------------------------------------")
+}
+
+func listUsers() {
+    var users []User = readUsers()
+
+    for i := 0; i < len(users); i++ {
+        printUser(users[i])
+    }
 }
 
 func getUser(username string) *User {

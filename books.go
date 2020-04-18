@@ -98,6 +98,13 @@ func addBook() {
     
     genre := getInput("Genre")
     entry_owner := getInput("Entry Owner")
+    var user *User = getUser(entry_owner)
+    if user == nil {
+        // panic(fmt.Sprintf("No user found with username: %s", entry_owner))
+        fmt.Printf("No user found with username: %s\n", entry_owner)
+        return
+    }
+   
 
     var new_book *Book = &Book{
         Title: title,

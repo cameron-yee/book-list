@@ -1,6 +1,10 @@
 # TODO
 
 1. Add update functions for users and reading-lists
+  -- update reading list members
+  -- update reading list boooks
+  -- update user username
+  -- update user reading lists
 2. Add CLI functions for users and reading-lists
 
 ## Feature requests

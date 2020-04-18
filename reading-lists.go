@@ -29,6 +29,25 @@ func readReadingLists() []ReadingList {
     return readinglists
 }
 
+func printReadingList(reading_list ReadingList) {
+    colorPrintString("Title", reading_list.Title)
+    colorPrintString("Members", strings.Join(reading_list.Members[:], ", "))
+
+    for i := 0; i < len(reading_list.Books); i++ {
+        printBook(reading_list.Books[i])
+    }
+    
+    fmt.Println("-------------------------------------------------------------")
+}
+
+func listReadingLists() {
+    var reading_lists []ReadingList = readReadingLists()
+
+    for i := 0; i < len(reading_lists); i++ {
+        printReadingList(reading_lists[i])
+    }
+}
+
 func writeReadingLists(reading_lists *[]ReadingList) {
     dataBytes, err := json.Marshal((*reading_lists))
     if err != nil {
@@ -67,6 +86,19 @@ func addReadingList() {
     }
 
     appendReadingList(new_reading_list)
+}
+
+func updateReadingListTitle(reading_list_title, new_title string) {
+    var readinglists []ReadingList = readReadingLists()
+
+    for i := 0; i < len(readinglists); i++ {
+        if strings.ToLower(readinglists[i].Title) == strings.ToLower(reading_list_title) {
+           readinglists[i].Title = new_title
+           break
+        }
+    }
+
+    writeReadingLists(&readinglists)
 }
 
 func deleteReadingList(reading_list_title string) {
