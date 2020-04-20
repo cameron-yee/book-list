@@ -10,7 +10,7 @@ import (
 type ReadingList struct {
     Title   string   `json:"title"`
     Members []string `json:"members"`
-    Books   []Book   `json:"books"`
+    Books   []string   `json:"books"`
 }
 
 func readReadingLists() []ReadingList {
@@ -41,12 +41,16 @@ func getReadingListIndex(reading_list_title string) int {
     return -1
 }
 
-func runUpdateReadingList(reading_list_title, field, value string) {
+func runUpdateReadingList() {
+    reading_list_title := getInput("Reading List Title")
+    field := getInput("Field")
+    value := getInput("New Value")
+    
     switch strings.ToLower(field) {
         case "title":
             updateReadingListTitle(reading_list_title, value)
         default:
-            fmt.Println("Only title is allowed to be updated through this CLI option.")
+            fmt.Println("Options are title.")
     }
 }
             
@@ -54,11 +58,22 @@ func printReadingList(reading_list ReadingList) {
     colorPrintString("Title", reading_list.Title)
     colorPrintString("Members", strings.Join(reading_list.Members[:], ", "))
 
+    var books []Book = readBooks()
+
+    colorPrintString("Books", "")
+    fmt.Println("-------------------------------------------------------------")
     for i := 0; i < len(reading_list.Books); i++ {
-        printBook(reading_list.Books[i])
+        for j := 0; j < len(books); j++ {
+            if strings.ToLower(books[j].Title) == strings.ToLower(reading_list.Books[i]) {
+                printBook(books[j])
+                break
+            }
+        }
     }
     
-    fmt.Println("-------------------------------------------------------------")
+    fmt.Println("*************************************************************")
+    fmt.Println("*************************************************************")
+    fmt.Println("*************************************************************")
 }
 
 func listReadingLists() {
@@ -95,7 +110,7 @@ func addReadingList() {
 
     var user *User = getUser(username)
     if user == nil {
-        panic(fmt.Sprintf("No user found with username: %s", username))
+        fmt.Printf("No user found with username: %s\n", username))
     }
    
     members := []string{(*user).Username}
@@ -122,17 +137,75 @@ func updateReadingListTitle(reading_list_title, new_title string) {
     writeReadingLists(&readinglists)
 }
 
-func updateReadingListAddMember(reading_list_title, username string) {
+func addBookToReadingList() {
+    title := getInput("Reading List Title")
+    book_title := getInput("Book Title")
+
     var readinglists []ReadingList = readReadingLists()
 
-    for i := 0; i < len(readinglists); i++ {
-        if strings.ToLower(readinglists[i].Title) == strings.ToLower(reading_list_title) {
-            var user *User = getUser(username)
-            if user == nil {
-                panic(fmt.Sprintf("No user found with username: %s", username))
-            }
+    var i int = getReadingListIndex(title)
+    if i == -1 {
+        fmt.Printf("No reading list with title: %s/n", title)
+        return
+    }
+
+    var book_index int = getBookIndex(book_title)
+    if book_index == -1 {
+        fmt.Printf("No book found with title: %s\n", book_title)
+        return
+    }
+
+    var books []Book = readBooks()
    
-            readinglists[i].Members = append(readinglists[i].Members, (*user).Username)
+    readinglists[i].Books = append(readinglists[i].Books, books[book_index].Title)
+
+    writeReadingLists(&readinglists)
+}
+
+func addMemberToReadingList() {
+    title := getInput("Reading List Title")
+    new_member := getInput("New Member Username")
+
+    var readinglists []ReadingList = readReadingLists()
+
+    var i int = getReadingListIndex(title)
+    if i == -1 {
+        fmt.Printf("No reading list with title: %s/n", title)
+        return
+    }
+
+    var user *User = getUser(new_member)
+    if user == nil {
+        fmt.Printf("No user found with username: %s", new_member)
+        return
+    }
+   
+    readinglists[i].Members = append(readinglists[i].Members, (*user).Username)
+
+    writeReadingLists(&readinglists)
+}
+
+func deleteBookFromReadingList() {
+    title := getInput("Reading List Title")
+    book_title := getInput("Book Title")
+    
+    var readinglists []ReadingList = readReadingLists()
+
+    var i int = getReadingListIndex(title)
+    if i == -1 {
+        fmt.Printf("No reading list with title: %s/n", title)
+        return
+    }
+
+    var book_exists int = getBookIndex(book_title)
+    if book_exists == -1 {
+        fmt.Printf("No book found with title: %s", book_title)
+        return
+    }
+
+    for j := 0; j < len(readinglists[i].Books); j++ {
+        if strings.ToLower(readinglists[i].Books[j]) == strings.ToLower(book_title) {
+            readinglists[i].Books = append(readinglists[i].Books[:j], readinglists[i].Books[j+1:]...)
             break
         }
     }
@@ -140,28 +213,30 @@ func updateReadingListAddMember(reading_list_title, username string) {
     writeReadingLists(&readinglists)
 }
 
-func updateReadingListDeleteMember(reading_list_title, username string) {
+func deleteMemberFromReadingList() {
+    title := getInput("Reading List Title")
+    member := getInput("New Member Username")
+    
     var readinglists []ReadingList = readReadingLists()
+    
+    var i int = getReadingListIndex(title)
+    if i == -1 {
+        fmt.Printf("No reading list with title: %s/n", title)
+        return
+    }
 
-    i, j := 0, 0
-    for ; i < len(readinglists); i++ {
-        if strings.ToLower(readinglists[i].Title) == strings.ToLower(reading_list_title) {
-            var user *User = getUser(username)
-            if user == nil {
-                panic(fmt.Sprintf("No user found with username: %s", username))
-            }
+    var user *User = getUser(member)
+    if user == nil {
+        fmt.Printf("No user found with username: %s", member)
+        return
+    }
 
-            for ; j < len(readinglists[i].Members); j++ {
-                if (*user).Username == readinglists[i].Members[j] {
-                    break
-                }
-            }
-
+    for j := 0; j < len(readinglists[i].Members); j++ {
+        if (*user).Username == readinglists[i].Members[j] {
+            readinglists[i].Members = append(readinglists[i].Members[:j], readinglists[i].Members[j+1:]...)
             break
         }
     }
-
-    readinglists[i].Members = append(readinglists[i].Members[:j], readinglists[i].Members[j+1:]...)
 
     writeReadingLists(&readinglists)
 }

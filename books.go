@@ -12,7 +12,6 @@ type Book struct {
     Title         string               `json:"title"`
     Series        string               `json:"series"`
     Author        string               `json:"author"`
-    // ReadingLists  []ReadingList        `json:"readingLists"`
     RecommendedBy string               `json:"recommendedBy"`
     Read          bool                 `json:"read"`
     Owned         bool                 `json:"owned"`
@@ -36,11 +35,22 @@ func readBooks() []Book {
     return books
 }
 
+func getBookIndex(book_title string) int {
+    var books []Book = readBooks()
+
+    for i := 0; i < len(books); i++ {
+        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+            return i
+        }
+    }
+
+    return -1
+}
+ 
 func printBook(book Book) {
     colorPrintString("Title", book.Title)
     colorPrintString("Series", book.Series)
     colorPrintString("Author", book.Author)
-    // colorPrintString("ReadingList", book.ReadingList)
     colorPrintString("Recommended By", book.RecommendedBy)
     colorPrintBool("Read", book.Read)
     colorPrintBool("Owned", book.Owned)
@@ -100,7 +110,6 @@ func addBook() {
     entry_owner := getInput("Entry Owner")
     var user *User = getUser(entry_owner)
     if user == nil {
-        // panic(fmt.Sprintf("No user found with username: %s", entry_owner))
         fmt.Printf("No user found with username: %s\n", entry_owner)
         return
     }
@@ -110,7 +119,6 @@ func addBook() {
         Title: title,
         Series: series,
         Author: author,
-        // ReadingList: reading_list,
         RecommendedBy: recommended_by,
         Read: read_bool,
         Owned: owned_bool,
@@ -121,7 +129,11 @@ func addBook() {
     appendBook(new_book)
 }
 
-func runUpdateBook(book_title, field, value string) {
+func runUpdateBook() {
+    book_title := getInput("Book Title")
+    field := getInput("Field")
+    value := getInput("New Value")
+    
     switch strings.ToLower(field) {
         case "title":
             updateBookTitle(book_title, value)
@@ -129,8 +141,6 @@ func runUpdateBook(book_title, field, value string) {
             updateBookSeries(book_title, value)
         case "author":
             updateBookAuthor(book_title, value)
-        // case "readinglist":
-        //     updateBookReadingList(book_title, value)
         case "recommendedby":
             updateBookRecommendedBy(book_title, value)
         case "read":
@@ -144,7 +154,7 @@ func runUpdateBook(book_title, field, value string) {
         case "entryowner":
             updateBookEntryOwner(book_title, value)
         default:
-            fmt.Println("Option not set up.")
+            fmt.Println("Options are title, series, author, recommendedby, read, owned, genre, or entryowner.")
     }
 }  
 
@@ -161,8 +171,8 @@ func updateBookTitle(book_title, title_value string) {
 
     for i := 0; i < len(reading_lists); i++ {
         for j := 0; j < len(reading_lists[i].Books); j++ {
-            if strings.ToLower(reading_lists[i].Books[j].Title) == strings.ToLower(book_title) {
-                reading_lists[i].Books[j].Title = title_value
+            if strings.ToLower(reading_lists[i].Books[j]) == strings.ToLower(book_title) {
+                reading_lists[i].Books[j] = title_value
             }
         }
     }
@@ -196,19 +206,6 @@ func updateBookAuthor(book_title, author_value string) {
     
     writeBooks(&books)
 }
-
-// func updateBookReadingList(book_title, reading_list_value string) {
-//     var books []Book = readBooks()
-
-//     for i := 0; i < len(books); i++ {
-//         if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-//             books[i].ReadingList = reading_list_value
-//             break
-//         }
-//     }
-    
-//     writeBooks(&books)
-// }
 
 func updateBookRecommendedBy(book_title, recommended_by_value string) {
     var books []Book = readBooks()

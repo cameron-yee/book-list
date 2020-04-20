@@ -28,12 +28,16 @@ func readUsers() []User {
     return users
 }
 
-func runUpdateUser(username, field, update_field_value string) {
+func runUpdateUser() {
+    username := getInput("Username")
+    field := getInput("Field")
+    value := getInput("New value")
+    
     switch strings.ToLower(field) {
         case "username":
-            updateUserUsername(username, update_field_value)
+            updateUserUsername(username, value)
         default:
-            fmt.Println("Option not available.")
+            fmt.Println("Options are username.")
     }
 }
 
@@ -100,6 +104,7 @@ func addUser() {
 
 func updateUserUsername(username, new_username string) {
     var users []User = readUsers()
+    var books []Book = readBooks()
     
     for i := 0; i < len(users); i++ {
         if users[i].Username == username {
@@ -107,8 +112,15 @@ func updateUserUsername(username, new_username string) {
             break
         }
     }
-    
+
+    for i := 0; i < len(books); i++ {
+        if books[i].EntryOwner == username {
+            books[i].EntryOwner = new_username
+        } 
+    }
+
     writeUsers(&users)
+    writeBooks(&books)
 }
 
 func deleteUser(username string) {

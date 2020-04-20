@@ -51,14 +51,35 @@ func runList(list_type string) {
     }
 }
 
-func runUpdate(update_type, update_primary_key, update_field, update_field_value string) {
-    switch strings.ToLower(update_type) {
-        case "readinglist":
-            runUpdateReadingList(update_primary_key, update_field, update_field_value)
-        case "user":
-            runUpdateUser(update_primary_key, update_field, update_field_value)
+func runReadingList(add_or_delete, field_type string) {
+    switch strings.ToLower(add_or_delete) {
+        case "add":
+            if strings.ToLower(field_type) == "book" {
+                addBookToReadingList()
+            } else if strings.ToLower(field_type) == "member" {
+                addMemberToReadingList()
+            }
+        case "delete":
+            if strings.ToLower(field_type) == "book" {
+                deleteBookFromReadingList()
+            } else if strings.ToLower(field_type) == "member" {
+                deleteMemberFromReadingList()
+            }
         default:
-            runUpdateBook(update_primary_key, update_field, update_field_value)
+            fmt.Println("Options are either add or delete.")
+    }
+}
+
+func runUpdate(update_type string) {
+    switch strings.ToLower(update_type) {
+        case "book":
+            runUpdateBook()
+        case "readinglist":
+            runUpdateReadingList()
+        case "user":
+            runUpdateUser()
+        default:
+            fmt.Println("Options are book, readinglist, or user.")
     }
 }
 
@@ -72,22 +93,18 @@ func main() {
         case "add":
             if len(os.Args) == 3 {
                 runAdd(os.Args[2])
-            } else if len(os.Args) == 5 {
-                updateReadingListAddMember(os.Args[3], os.Args[4])
             } else {
-                panic("Please provide a type to add")
+                fmt.Println("Please provide a type to add.")
             }
         case "delete":
             if len(os.Args) == 4 {
                 runDelete(os.Args[2], os.Args[3])
-            } else if (len(os.Args) == 5) {
-                updateReadingListDeleteMember(os.Args[3], os.Args[4])
             } else {
-                panic("Please provide a type to delete and a value")
+                fmt.Println("Please provide a type to delete and a value.")
             }
         case "filter":
             if len(os.Args) != 4 {
-                panic("Please provide a filter and value.")
+                fmt.Println("Please provide a filter and value.")
             } else {
                 value, err := strconv.ParseBool(os.Args[3])
                 if err != nil {
@@ -98,21 +115,27 @@ func main() {
             }
         case "list":
             if len(os.Args) != 3 {
-                panic("Please provide a type to list")
+                fmt.Println("Please provide a type to list.")
             } else {
                 runList(os.Args[2])
             }
+        case "readinglist":
+            if len(os.Args) == 4 {
+                runReadingList(os.Args[2], os.Args[3])
+            } else {
+                fmt.Println("add/delete book or member.")
+            }
         case "search":
             if len(os.Args) != 4 {
-                panic("Please provide a search and value.")
+                fmt.Println("Please provide a search and value.")
             } else {
                 runSearch(os.Args[2], os.Args[3])
             }
         case "update":
-            if len(os.Args) != 6 {
-                panic("Please provide a type, primary_key, field to update, and the new value for the field.") // readinglist, "main", title, "main2"
+            if len(os.Args) != 3 {
+                fmt.Println("Please provide a type to update.") // readinglist, "main", title, "main2"
             } else {
-                runUpdate(os.Args[2], os.Args[3], os.Args[4], os.Args[5]) // title, field, field_value
+                runUpdate(os.Args[2]) // title, field, field_value
             }
         default:
             help()

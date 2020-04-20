@@ -1,11 +1,17 @@
 # TODO
+  -- limit search results
+  -- clean up printing
 
-1. Add update functions for users and reading-lists
+## WIP
+
+## DONE
+  -- clean up CLI so it makes since
+  -- change panic calls to fmt.Print
+  -- Add CLI functions for users and reading-lists
   -- update reading list members
-  -- update reading list boooks
-  -- update user username
   -- update user reading lists
-2. Add CLI functions for users and reading-lists
+  -- update reading list books
+-----------------------------------------------------------------
 
 ## Feature requests
 1. Priority level, Queue, or Named Reading Lists (playlists)
