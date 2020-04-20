@@ -28,6 +28,15 @@ func readUsers() []User {
     return users
 }
 
+func runUpdateUser(username, field, update_field_value string) {
+    switch strings.ToLower(field) {
+        case "username":
+            updateUserUsername(username, update_field_value)
+        default:
+            fmt.Println("Option not available.")
+    }
+}
+
 func printUser(user User) {
     colorPrintString("Username", user.Username)
 
@@ -87,6 +96,19 @@ func addUser() {
     }
 
     appendUser(new_user)    
+}
+
+func updateUserUsername(username, new_username string) {
+    var users []User = readUsers()
+    
+    for i := 0; i < len(users); i++ {
+        if users[i].Username == username {
+            users[i].Username = new_username
+            break
+        }
+    }
+    
+    writeUsers(&users)
 }
 
 func deleteUser(username string) {

@@ -121,7 +121,7 @@ func addBook() {
     appendBook(new_book)
 }
 
-func runUpdate(book_title, field, value string) {
+func runUpdateBook(book_title, field, value string) {
     switch strings.ToLower(field) {
         case "title":
             updateBookTitle(book_title, value)
@@ -144,12 +144,13 @@ func runUpdate(book_title, field, value string) {
         case "entryowner":
             updateBookEntryOwner(book_title, value)
         default:
-            fmt.Print("Option not set up.")
+            fmt.Println("Option not set up.")
     }
 }  
 
 func updateBookTitle(book_title, title_value string) {
     var books []Book = readBooks()
+    var reading_lists []ReadingList = readReadingLists()
 
     for i := 0; i < len(books); i++ {
         if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
@@ -157,8 +158,17 @@ func updateBookTitle(book_title, title_value string) {
             break
         }
     }
-    
+
+    for i := 0; i < len(reading_lists); i++ {
+        for j := 0; j < len(reading_lists[i].Books); j++ {
+            if strings.ToLower(reading_lists[i].Books[j].Title) == strings.ToLower(book_title) {
+                reading_lists[i].Books[j].Title = title_value
+            }
+        }
+    }
+
     writeBooks(&books)
+    writeReadingLists(&reading_lists)
 }
 
 func updateBookSeries(book_title, series_value string) {

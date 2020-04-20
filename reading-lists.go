@@ -29,6 +29,27 @@ func readReadingLists() []ReadingList {
     return readinglists
 }
 
+func getReadingListIndex(reading_list_title string) int {
+    var reading_lists []ReadingList = readReadingLists()
+
+    for i := 0; i < len(reading_lists); i++ {
+        if strings.ToLower(reading_lists[i].Title) == strings.ToLower(reading_list_title) {
+            return i
+        }
+    }
+
+    return -1
+}
+
+func runUpdateReadingList(reading_list_title, field, value string) {
+    switch strings.ToLower(field) {
+        case "title":
+            updateReadingListTitle(reading_list_title, value)
+        default:
+            fmt.Println("Only title is allowed to be updated through this CLI option.")
+    }
+}
+            
 func printReadingList(reading_list ReadingList) {
     colorPrintString("Title", reading_list.Title)
     colorPrintString("Members", strings.Join(reading_list.Members[:], ", "))
@@ -101,15 +122,54 @@ func updateReadingListTitle(reading_list_title, new_title string) {
     writeReadingLists(&readinglists)
 }
 
-func deleteReadingList(reading_list_title string) {
-    var reading_lists []ReadingList = readReadingLists()
+func updateReadingListAddMember(reading_list_title, username string) {
+    var readinglists []ReadingList = readReadingLists()
 
-    i := 0
-    for ; i < len(reading_lists); i++ {
-        if strings.ToLower(reading_lists[i].Title) == strings.ToLower(reading_list_title) {
+    for i := 0; i < len(readinglists); i++ {
+        if strings.ToLower(readinglists[i].Title) == strings.ToLower(reading_list_title) {
+            var user *User = getUser(username)
+            if user == nil {
+                panic(fmt.Sprintf("No user found with username: %s", username))
+            }
+   
+            readinglists[i].Members = append(readinglists[i].Members, (*user).Username)
             break
         }
     }
+
+    writeReadingLists(&readinglists)
+}
+
+func updateReadingListDeleteMember(reading_list_title, username string) {
+    var readinglists []ReadingList = readReadingLists()
+
+    i, j := 0, 0
+    for ; i < len(readinglists); i++ {
+        if strings.ToLower(readinglists[i].Title) == strings.ToLower(reading_list_title) {
+            var user *User = getUser(username)
+            if user == nil {
+                panic(fmt.Sprintf("No user found with username: %s", username))
+            }
+
+            for ; j < len(readinglists[i].Members); j++ {
+                if (*user).Username == readinglists[i].Members[j] {
+                    break
+                }
+            }
+
+            break
+        }
+    }
+
+    readinglists[i].Members = append(readinglists[i].Members[:j], readinglists[i].Members[j+1:]...)
+
+    writeReadingLists(&readinglists)
+}
+
+func deleteReadingList(reading_list_title string) {
+    var reading_lists []ReadingList = readReadingLists()
+
+    var i int = getReadingListIndex(reading_list_title)
 
     reading_lists = append(reading_lists[:i], reading_lists[i+1:]...)
     
