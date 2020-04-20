@@ -108,8 +108,8 @@ func addBook() {
     
     genre := getInput("Genre")
     entry_owner := getInput("Entry Owner")
-    var user *User = getUser(entry_owner)
-    if user == nil {
+    var user_index  = getUserIndex(entry_owner)
+    if user_index == -1 {
         fmt.Printf("No user found with username: %s\n", entry_owner)
         return
     }

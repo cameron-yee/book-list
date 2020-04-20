@@ -62,6 +62,7 @@ func printReadingList(reading_list ReadingList) {
 
     colorPrintString("Books", "")
     fmt.Println("-------------------------------------------------------------")
+    fmt.Println("-------------------------------------------------------------")
     for i := 0; i < len(reading_list.Books); i++ {
         for j := 0; j < len(books); j++ {
             if strings.ToLower(books[j].Title) == strings.ToLower(reading_list.Books[i]) {
@@ -71,9 +72,7 @@ func printReadingList(reading_list ReadingList) {
         }
     }
     
-    fmt.Println("*************************************************************")
-    fmt.Println("*************************************************************")
-    fmt.Println("*************************************************************")
+    fmt.Println("-------------------------------------------------------------")
 }
 
 func listReadingLists() {
@@ -108,12 +107,14 @@ func addReadingList() {
     title := getInput("Title")
     username := getInput("Username")
 
-    var user *User = getUser(username)
-    if user == nil {
-        fmt.Printf("No user found with username: %s\n", username))
+    var user_index int = getUserIndex(username)
+    if user_index == -1 {
+        fmt.Printf("No user found with username: %s\n", username)
     }
+
+    var users []User = readUsers()
    
-    members := []string{(*user).Username}
+    members := []string{users[user_index].Username}
 
     var new_reading_list *ReadingList = &ReadingList{
         Title: title,
@@ -167,6 +168,7 @@ func addMemberToReadingList() {
     new_member := getInput("New Member Username")
 
     var readinglists []ReadingList = readReadingLists()
+    var users []User = readUsers()
 
     var i int = getReadingListIndex(title)
     if i == -1 {
@@ -174,15 +176,18 @@ func addMemberToReadingList() {
         return
     }
 
-    var user *User = getUser(new_member)
-    if user == nil {
+    var user_index int = getUserIndex(new_member)
+    if user_index == -1 {
         fmt.Printf("No user found with username: %s", new_member)
         return
     }
    
-    readinglists[i].Members = append(readinglists[i].Members, (*user).Username)
+    readinglists[i].Members = append(readinglists[i].Members, users[i].Username)
+
+    users[user_index].ReadingLists = append(users[i].ReadingLists, title)
 
     writeReadingLists(&readinglists)
+    writeUsers(&users)
 }
 
 func deleteBookFromReadingList() {
@@ -218,6 +223,7 @@ func deleteMemberFromReadingList() {
     member := getInput("New Member Username")
     
     var readinglists []ReadingList = readReadingLists()
+    var users []User = readUsers()
     
     var i int = getReadingListIndex(title)
     if i == -1 {
@@ -225,28 +231,54 @@ func deleteMemberFromReadingList() {
         return
     }
 
-    var user *User = getUser(member)
-    if user == nil {
+    var user_index int = getUserIndex(member)
+    if user_index == -1 {
         fmt.Printf("No user found with username: %s", member)
         return
     }
 
     for j := 0; j < len(readinglists[i].Members); j++ {
-        if (*user).Username == readinglists[i].Members[j] {
+        if users[user_index].Username == readinglists[i].Members[j] {
             readinglists[i].Members = append(readinglists[i].Members[:j], readinglists[i].Members[j+1:]...)
+            break
+        }
+    }
+    
+    for j := 0; j < len(users[user_index].ReadingLists); j++ {
+        if users[user_index].ReadingLists[j] == title {
+            users[user_index].ReadingLists = append(users[user_index].ReadingLists[:j], users[user_index].ReadingLists[j+1:]...)
             break
         }
     }
 
     writeReadingLists(&readinglists)
+    writeUsers(&users)
 }
 
 func deleteReadingList(reading_list_title string) {
     var reading_lists []ReadingList = readReadingLists()
+    var users []User = readUsers()
 
     var i int = getReadingListIndex(reading_list_title)
+    if i == -1 {
+        fmt.Printf("No reading list with title: %s\n", reading_list_title)
+        return
+    }
+
+    for i := 0; i < len(users); i++ {
+        for j := 0; j < len(users[i].ReadingLists); j++ {
+            if users[i].ReadingLists[j] == reading_list_title {
+                users[i].ReadingLists = append(users[i].ReadingLists[:j], users[i].ReadingLists[j+1:]...)
+                break
+            }
+        }
+    }
+
+    
 
     reading_lists = append(reading_lists[:i], reading_lists[i+1:]...)
     
+    
     writeReadingLists(&reading_lists)
+    writeUsers(&users)
 }

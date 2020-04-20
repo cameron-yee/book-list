@@ -43,10 +43,7 @@ func runUpdateUser() {
 
 func printUser(user User) {
     colorPrintString("Username", user.Username)
-
-    for i := 0; i < len(user.ReadingLists); i++ {
-        colorPrintString("Reading List", user.ReadingLists[i])
-    }
+    colorPrintString("Reading Lists", strings.Join(user.ReadingLists[:], ", "))
     
     fmt.Println("-------------------------------------------------------------")
 }
@@ -59,16 +56,16 @@ func listUsers() {
     }
 }
 
-func getUser(username string) *User {
+func getUserIndex(username string) int {
     var users []User = readUsers()
 
     for i := 0; i < len(users); i++ {
         if users[i].Username == username {
-            return &users[i]
+            return i
         }
     }
 
-    return nil
+    return -1
 }
 
 func writeUsers(users *[]User) {
