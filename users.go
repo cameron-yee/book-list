@@ -91,6 +91,12 @@ func appendUser(user *User) {
 func addUser() {
     username := getInput("Username")
 
+    var user_index int = getUserIndex(username)
+    if user_index != -1 {
+        fmt.Printf("User already exists with username: \"%s\".", username)
+        return
+    }
+
     var new_user *User = &User{
         Username: username,
         ReadingLists: nil, //??? Not sure yet
@@ -100,15 +106,23 @@ func addUser() {
 }
 
 func updateUserUsername(username, new_username string) {
-    var users []User = readUsers()
-    var books []Book = readBooks()
-    
-    for i := 0; i < len(users); i++ {
-        if users[i].Username == username {
-            users[i].Username = new_username
-            break
-        }
+    var new_username_index int = getUserIndex(new_username)
+    if new_username_index != -1 {
+        fmt.Printf("User already exists with username: \"%s\".", new_username)
+        return
     }
+    
+    var user_index int = getUserIndex(username)
+    if user_index != -1 {
+        var users []User = readUsers()
+        users[user_index].Username = new_username
+        writeUsers(&users)
+    } else {
+        fmt.Printf("User doesn't exist with username: \"%s\".", username)
+        return
+    }
+    
+    var books []Book = readBooks()
 
     for i := 0; i < len(books); i++ {
         if books[i].EntryOwner == username {
@@ -116,21 +130,17 @@ func updateUserUsername(username, new_username string) {
         } 
     }
 
-    writeUsers(&users)
     writeBooks(&books)
 }
 
 func deleteUser(username string) {
-    var users []User = readUsers()
-
-    i := 0
-    for ; i < len(users); i++ {
-        if strings.ToLower(users[i].Username) == strings.ToLower(username) {
-            break
-        }
-    }
-
-    users = append(users[:i], users[i+1:]...)
+    var user_index int = getUserIndex(username)
     
-    writeUsers(&users)
+    if user_index != -1 {
+        var users []User = readUsers()
+        users = append(users[:user_index], users[user_index+1:]...)
+        writeUsers(&users)
+    } else {
+        fmt.Printf("User doesn't exist with username: \"%s\".", username)
+    }
 }

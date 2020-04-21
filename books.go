@@ -46,6 +46,10 @@ func getBookIndex(book_title string) int {
 
     return -1
 }
+
+func printCantFindBook(book_title string) {
+    fmt.Printf("Can't find book with title \"%s\".\n", book_title)
+}
  
 func printBook(book Book) {
     colorPrintString("Title", book.Title)
@@ -89,9 +93,16 @@ func appendBook(book *Book) {
 
 func addBook() {
     title := getInput("Title")
+
+    var book_index int = getBookIndex(title)
+    
+    if book_index != -1 {
+        fmt.Printf("Book with title \"%s\" already exists.", title)
+        return
+    }
+    
     series := getInput("Series")
     author := getInput("Author")
-    // reading_list := getInput("Reading List")
     recommended_by := getInput("Recommended By")
     
     read := getInput("Read")
@@ -158,131 +169,131 @@ func runUpdateBook() {
     }
 }  
 
-func updateBookTitle(book_title, title_value string) {
-    var books []Book = readBooks()
-    var reading_lists []ReadingList = readReadingLists()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].Title = title_value
-            break
-        }
+func updateBookTitle(book_title, new_book_title string) {
+    var new_book_index = getBookIndex(new_book_title)
+    
+    if new_book_index != -1 {
+        fmt.Printf("Book with title \"%s\" already exists.", new_book_title)
+        return
     }
+    
+    var book_index int = getBookIndex(book_title)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].Title = new_book_title
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+        return
+    }
+    
+    var reading_lists []ReadingList = readReadingLists()
 
     for i := 0; i < len(reading_lists); i++ {
         for j := 0; j < len(reading_lists[i].Books); j++ {
             if strings.ToLower(reading_lists[i].Books[j]) == strings.ToLower(book_title) {
-                reading_lists[i].Books[j] = title_value
+                reading_lists[i].Books[j] = new_book_title
             }
         }
     }
 
-    writeBooks(&books)
     writeReadingLists(&reading_lists)
 }
 
 func updateBookSeries(book_title, series_value string) {
-    var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].Series = series_value
-            break
-        }
-    }
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].Series = series_value
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
 }
 
 func updateBookAuthor(book_title, author_value string) {
     var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].Author = author_value
-            break
-        }
+    
+    var book_index int = getBookIndex(book_title)
+    if book_index != -1 {
+        books[book_index].Author = author_value
+    } else {
+        printCantFindBook(book_title)
     }
     
     writeBooks(&books)
 }
 
 func updateBookRecommendedBy(book_title, recommended_by_value string) {
-    var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].RecommendedBy = recommended_by_value
-            break
-        }
-    }
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].RecommendedBy = recommended_by_value
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
+
 }
 
 func updateBookRead(book_title string, read_value bool) {
-    var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].Read = read_value
-            break
-        }
-    }
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].Read = read_value
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
 }
 
 func updateBookOwned(book_title string, owned_value bool) {
-    var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].Owned = owned_value
-            break
-        }
-    }
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].Owned = owned_value
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
 }
 
 func updateBookGenre(book_title, genre_value string) {
-    var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].Genre = genre_value
-            break
-        }
-    }
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].Genre = genre_value
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
 }
 
 func updateBookEntryOwner(book_title, entry_owner_value string) {
-    var books []Book = readBooks()
-
-    for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            books[i].EntryOwner = entry_owner_value
-            break
-        }
-    }
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books[book_index].EntryOwner = entry_owner_value
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
 }
 
 func deleteBook(book_title string) {
-    var books []Book = readBooks()
-
-    i := 0
-    for ; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
-            break
-        }
-    }
-
-    books = append(books[:i], books[i+1:]...)
+    var book_index int = getBookIndex(book_title)
     
-    writeBooks(&books)
+    if book_index != -1 {
+        var books []Book = readBooks()
+        books = append(books[:book_index], books[book_index+1:]...)
+        writeBooks(&books)
+    } else {
+        printCantFindBook(book_title)
+    }
 }

@@ -105,6 +105,13 @@ func appendReadingList(readinglist *ReadingList) {
 
 func addReadingList() {
     title := getInput("Title")
+
+    var reading_list_index = getReadingListIndex(title)
+    if reading_list_index != -1 {
+        fmt.Printf("Reading list already exists with title: \"%s\".\n", title)
+        return
+    } 
+    
     username := getInput("Username")
 
     var user_index int = getUserIndex(username)
@@ -127,15 +134,20 @@ func addReadingList() {
 
 func updateReadingListTitle(reading_list_title, new_title string) {
     var readinglists []ReadingList = readReadingLists()
-
-    for i := 0; i < len(readinglists); i++ {
-        if strings.ToLower(readinglists[i].Title) == strings.ToLower(reading_list_title) {
-           readinglists[i].Title = new_title
-           break
-        }
+    
+    var updated_reading_list_index = getReadingListIndex(new_title)
+    if updated_reading_list_index != -1 {
+        fmt.Printf("Reading list already exists with title: \"%s\".\n", new_title)
+        return
     }
 
-    writeReadingLists(&readinglists)
+    var reading_list_index = getReadingListIndex(reading_list_title)
+    if reading_list_index != -1 {
+        readinglists[reading_list_index].Title = new_title
+        writeReadingLists(&readinglists)
+    } else {
+        fmt.Printf("Can't find reading list with title: \"%s\".\n", reading_list_title)
+    }
 }
 
 func addBookToReadingList() {
@@ -144,8 +156,8 @@ func addBookToReadingList() {
 
     var readinglists []ReadingList = readReadingLists()
 
-    var i int = getReadingListIndex(title)
-    if i == -1 {
+    var readinglist_index int = getReadingListIndex(title)
+    if readinglist_index == -1 {
         fmt.Printf("No reading list with title: %s/n", title)
         return
     }
@@ -155,12 +167,20 @@ func addBookToReadingList() {
         fmt.Printf("No book found with title: %s\n", book_title)
         return
     }
+    
+    var book_already_in_list bool
+    for i := 0; i < len(readinglists[readinglist_index].Books); i++ {
+        if readinglists[readinglist_index].Books[i] == book_title {
+            book_already_in_list = true
+        }    
+    }
 
-    var books []Book = readBooks()
-   
-    readinglists[i].Books = append(readinglists[i].Books, books[book_index].Title)
-
-    writeReadingLists(&readinglists)
+    if book_already_in_list == false {
+        readinglists[readinglist_index].Books = append(readinglists[readinglist_index].Books, book_title)
+        writeReadingLists(&readinglists)
+    } else {
+        fmt.Printf("Book with title: \"%s\" already exists in reading list \"%s\".\n", book_title, title)
+    }
 }
 
 func addMemberToReadingList() {
@@ -170,24 +190,34 @@ func addMemberToReadingList() {
     var readinglists []ReadingList = readReadingLists()
     var users []User = readUsers()
 
-    var i int = getReadingListIndex(title)
-    if i == -1 {
-        fmt.Printf("No reading list with title: %s/n", title)
+    var readinglist_index int = getReadingListIndex(title)
+    if readinglist_index == -1 {
+        fmt.Printf("No reading list with title: \"%s\".\n", title)
         return
     }
 
     var user_index int = getUserIndex(new_member)
     if user_index == -1 {
-        fmt.Printf("No user found with username: %s", new_member)
+        fmt.Printf("No user found with username: \"%s\".\n", new_member)
         return
     }
-   
-    readinglists[i].Members = append(readinglists[i].Members, users[i].Username)
+    
+    var user_already_in_list bool
+    for i := 0; i < len(readinglists[readinglist_index].Members); i++ {
+        if readinglists[readinglist_index].Members[i] == new_member {
+            user_already_in_list = true
+        }    
+    }
 
-    users[user_index].ReadingLists = append(users[i].ReadingLists, title)
+    if user_already_in_list == false {
+        readinglists[readinglist_index].Members = append(readinglists[readinglist_index].Members, users[user_index].Username)
+        users[user_index].ReadingLists = append(users[user_index].ReadingLists, title)
 
-    writeReadingLists(&readinglists)
-    writeUsers(&users)
+        writeReadingLists(&readinglists)
+        writeUsers(&users)
+    } else {
+        fmt.Printf("User with title: \"%s\" already exists in reading list \"%s\".\n", new_member, title)
+    }
 }
 
 func deleteBookFromReadingList() {
@@ -196,21 +226,21 @@ func deleteBookFromReadingList() {
     
     var readinglists []ReadingList = readReadingLists()
 
-    var i int = getReadingListIndex(title)
-    if i == -1 {
-        fmt.Printf("No reading list with title: %s/n", title)
+    var reading_list_index int = getReadingListIndex(title)
+    if reading_list_index == -1 {
+        fmt.Printf("No reading list with title: \"%s\".\n", title)
         return
     }
 
     var book_exists int = getBookIndex(book_title)
     if book_exists == -1 {
-        fmt.Printf("No book found with title: %s", book_title)
+        fmt.Printf("No book found with title: \"%s\".\n", book_title)
         return
     }
 
-    for j := 0; j < len(readinglists[i].Books); j++ {
-        if strings.ToLower(readinglists[i].Books[j]) == strings.ToLower(book_title) {
-            readinglists[i].Books = append(readinglists[i].Books[:j], readinglists[i].Books[j+1:]...)
+    for i := 0; i < len(readinglists[reading_list_index].Books); i++ {
+        if strings.ToLower(readinglists[reading_list_index].Books[i]) == strings.ToLower(book_title) {
+            readinglists[reading_list_index].Books = append(readinglists[reading_list_index].Books[:i], readinglists[reading_list_index].Books[i+1:]...)
             break
         }
     }
@@ -220,20 +250,20 @@ func deleteBookFromReadingList() {
 
 func deleteMemberFromReadingList() {
     title := getInput("Reading List Title")
-    member := getInput("New Member Username")
+    member := getInput("Member Username")
     
     var readinglists []ReadingList = readReadingLists()
     var users []User = readUsers()
     
     var i int = getReadingListIndex(title)
     if i == -1 {
-        fmt.Printf("No reading list with title: %s/n", title)
+        fmt.Printf("No reading list with title: \"%s\".\n", title)
         return
     }
 
     var user_index int = getUserIndex(member)
     if user_index == -1 {
-        fmt.Printf("No user found with username: %s", member)
+        fmt.Printf("No user found with username: \"%s\".\n", member)
         return
     }
 
@@ -259,9 +289,9 @@ func deleteReadingList(reading_list_title string) {
     var reading_lists []ReadingList = readReadingLists()
     var users []User = readUsers()
 
-    var i int = getReadingListIndex(reading_list_title)
-    if i == -1 {
-        fmt.Printf("No reading list with title: %s\n", reading_list_title)
+    var reading_list_index int = getReadingListIndex(reading_list_title)
+    if reading_list_index == -1 {
+        fmt.Printf("No reading list with title: \"%s\".\n", reading_list_title)
         return
     }
 
@@ -274,10 +304,7 @@ func deleteReadingList(reading_list_title string) {
         }
     }
 
-    
-
-    reading_lists = append(reading_lists[:i], reading_lists[i+1:]...)
-    
+    reading_lists = append(reading_lists[:reading_list_index], reading_lists[reading_list_index+1:]...)
     
     writeReadingLists(&reading_lists)
     writeUsers(&users)

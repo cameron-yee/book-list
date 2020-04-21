@@ -51,22 +51,31 @@ func runList(list_type string) {
     }
 }
 
-func runReadingList(add_or_delete, field_type string) {
-    switch strings.ToLower(add_or_delete) {
+func runReadingList(command, value string) {
+    switch strings.ToLower(command) {
         case "add":
-            if strings.ToLower(field_type) == "book" {
+            if strings.ToLower(value) == "book" {
                 addBookToReadingList()
-            } else if strings.ToLower(field_type) == "member" {
+            } else if strings.ToLower(value) == "member" {
                 addMemberToReadingList()
             }
         case "delete":
-            if strings.ToLower(field_type) == "book" {
+            if strings.ToLower(value) == "book" {
                 deleteBookFromReadingList()
-            } else if strings.ToLower(field_type) == "member" {
+            } else if strings.ToLower(value) == "member" {
                 deleteMemberFromReadingList()
             }
+        case "print":
+            var reading_list_index int = getReadingListIndex(value)
+
+            if reading_list_index != -1 {
+                var readinglists []ReadingList = readReadingLists()
+                printReadingList(readinglists[reading_list_index])
+            } else {
+                fmt.Printf("No readinglist with title: \"%s\".\n", value)
+            }
         default:
-            fmt.Println("Options are either add or delete.")
+            fmt.Println("Options are add, delete, or print.")
     }
 }
 
@@ -123,7 +132,7 @@ func main() {
             if len(os.Args) == 4 {
                 runReadingList(os.Args[2], os.Args[3])
             } else {
-                fmt.Println("add/delete book or member.")
+                fmt.Println("add/delete book or member. print readinglist.")
             }
         case "search":
             if len(os.Args) != 4 {
