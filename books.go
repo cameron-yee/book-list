@@ -97,7 +97,7 @@ func addBook() {
     var book_index int = getBookIndex(title)
     
     if book_index != -1 {
-        fmt.Printf("Book with title \"%s\" already exists.", title)
+        fmt.Printf("Book already exists with title: \"%s\".\n", title)
         return
     }
     
@@ -173,7 +173,7 @@ func updateBookTitle(book_title, new_book_title string) {
     var new_book_index = getBookIndex(new_book_title)
     
     if new_book_index != -1 {
-        fmt.Printf("Book with title \"%s\" already exists.", new_book_title)
+        fmt.Printf("Book already exists with title: \"%s\".\n", new_book_title)
         return
     }
     

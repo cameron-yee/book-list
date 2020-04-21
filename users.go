@@ -93,7 +93,7 @@ func addUser() {
 
     var user_index int = getUserIndex(username)
     if user_index != -1 {
-        fmt.Printf("User already exists with username: \"%s\".", username)
+        fmt.Printf("User already exists with username: \"%s\".\n", username)
         return
     }
 
@@ -108,7 +108,7 @@ func addUser() {
 func updateUserUsername(username, new_username string) {
     var new_username_index int = getUserIndex(new_username)
     if new_username_index != -1 {
-        fmt.Printf("User already exists with username: \"%s\".", new_username)
+        fmt.Printf("User already exists with username: \"%s\".\n", new_username)
         return
     }
     
@@ -118,7 +118,7 @@ func updateUserUsername(username, new_username string) {
         users[user_index].Username = new_username
         writeUsers(&users)
     } else {
-        fmt.Printf("User doesn't exist with username: \"%s\".", username)
+        fmt.Printf("User doesn't exist with username: \"%s\".\n", username)
         return
     }
     
@@ -141,6 +141,6 @@ func deleteUser(username string) {
         users = append(users[:user_index], users[user_index+1:]...)
         writeUsers(&users)
     } else {
-        fmt.Printf("User doesn't exist with username: \"%s\".", username)
+        fmt.Printf("User doesn't exist with username: \"%s\".\n", username)
     }
 }

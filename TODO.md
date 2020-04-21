@@ -25,4 +25,5 @@
 - Book length (short, medium, long)
 - Series order
 - Tags
+- Note
 
