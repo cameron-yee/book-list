@@ -7,12 +7,8 @@ import (
     "os"
 )
 
-func colorPrintString(label, str string) {
+func colorPrintField(label, str string) {
     fmt.Printf("\033[1;35m%s\033[0m: %s\n", label, str)
-}
-
-func colorPrintBool(label string,  boolean bool) {
-    fmt.Printf("\033[1;35m%s\033[0m: %t\n", label, boolean)
 }
 
 func getInput(label string) string {

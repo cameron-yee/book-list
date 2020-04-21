@@ -40,14 +40,14 @@ func runDelete(delete_type, value string) {
     }
 }
 
-func runList(list_type string) {
+func runList(list_type string, verbose bool) {
     switch strings.ToLower(list_type) {
         case "readinglists":
-            listReadingLists()
+            listReadingLists(verbose)
         case "users":
             listUsers()
         default:
-            listBooks()
+            listBooks(verbose)
     }
 }
 
@@ -70,7 +70,7 @@ func runReadingList(command, value string) {
 
             if reading_list_index != -1 {
                 var readinglists []ReadingList = readReadingLists()
-                printReadingList(readinglists[reading_list_index])
+                printReadingList(readinglists[reading_list_index], false) 
             } else {
                 fmt.Printf("No readinglist with title: \"%s\".\n", value)
             }
@@ -123,13 +123,28 @@ func main() {
                 runFilter(os.Args[2], value)
             }
         case "list":
-            if len(os.Args) != 3 {
-                fmt.Println("Please provide a type to list.")
+            if len(os.Args) == 3 {
+                runList(os.Args[2], false)
+            } else if len(os.Args) == 4 {
+                if os.Args[3] == "--verbose" || os.Args[3] == "-v" {
+                    runList(os.Args[2], true)
+                }
             } else {
-                runList(os.Args[2])
+                fmt.Println("Please provide a type to list.")
             }
         case "readinglist":
-            if len(os.Args) == 4 {
+            if len(os.Args) == 5 {
+                var readinglists []ReadingList = readReadingLists()
+
+                var reading_list_index = getReadingListIndex(os.Args[3])
+                if reading_list_index != -1 {
+                    if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
+                        printReadingList(readinglists[reading_list_index], true)
+                    }
+                } else {
+                    fmt.Printf("No readinglist with title: \"%s\".\n", os.Args[3])
+                }
+            } else if len(os.Args) == 4 {
                 runReadingList(os.Args[2], os.Args[3])
             } else {
                 fmt.Println("add/delete book or member. print readinglist.")

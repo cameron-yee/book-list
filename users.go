@@ -42,8 +42,8 @@ func runUpdateUser() {
 }
 
 func printUser(user User) {
-    colorPrintString("Username", user.Username)
-    colorPrintString("Reading Lists", strings.Join(user.ReadingLists[:], ", "))
+    colorPrintField("Username", user.Username)
+    colorPrintField("Reading Lists", strings.Join(user.ReadingLists[:], ", "))
     
     fmt.Println("-------------------------------------------------------------")
 }

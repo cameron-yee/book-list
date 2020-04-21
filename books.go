@@ -51,23 +51,33 @@ func printCantFindBook(book_title string) {
     fmt.Printf("Can't find book with title \"%s\".\n", book_title)
 }
  
-func printBook(book Book) {
-    colorPrintString("Title", book.Title)
-    colorPrintString("Series", book.Series)
-    colorPrintString("Author", book.Author)
-    colorPrintString("Recommended By", book.RecommendedBy)
-    colorPrintBool("Read", book.Read)
-    colorPrintBool("Owned", book.Owned)
-    colorPrintString("Genre", book.Genre)
-    colorPrintString("EntryOwner", book.EntryOwner)
+func printBook(book Book, indent bool, verbose bool) {
+    var prefix string
+
+    if indent {
+        prefix = "\t"
+    }
+    
+    colorPrintField(fmt.Sprintf("%sTitle", prefix), book.Title)
+
+    if verbose {
+        colorPrintField(fmt.Sprintf("%sSeries", prefix), book.Series)
+        colorPrintField(fmt.Sprintf("%sAuthor", prefix), book.Author)
+        colorPrintField(fmt.Sprintf("%sRecommended By", prefix), book.RecommendedBy)
+        colorPrintField(fmt.Sprintf("%sRead", prefix), strconv.FormatBool(book.Read))
+        colorPrintField(fmt.Sprintf("%sOwned", prefix), strconv.FormatBool(book.Owned))
+        colorPrintField(fmt.Sprintf("%sGenre", prefix), book.Genre)
+        colorPrintField(fmt.Sprintf("%sEntryOwner", prefix), book.EntryOwner)
+    }
+    
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listBooks() {
+func listBooks(verbose bool) {
     var books []Book = readBooks()
 
     for i := 0; i < len(books); i++ {
-        printBook(books[i])
+        printBook(books[i], false, verbose)
     }
 }
 
