@@ -1,12 +1,13 @@
 # TODO
   -- verbose printing for search/filter
   -- **CLI**: book_list list series "Wheel of Time"
-  -- GitHub pull check to make sure merge conflicts don't ruin everything
-    * force pull before edits
   -- limit search results
 
 ## WIP
   -- clean up printing
+  -- GitHub pull check to make sure merge conflicts don't ruin everything
+    * force pull before edits
+    * Done for books. Add to users, reading-lists 
 
 ## DONE
   -- clean up CLI so it makes since
