@@ -2,9 +2,12 @@ package main
 
 import (
     "fmt"
+    "log"
     "os"
     "strconv"
     "strings"
+
+    "github.com/joho/godotenv"
 )
 
 func help() {
@@ -89,6 +92,12 @@ func runUpdate(update_type string) {
             runUpdateUser()
         default:
             fmt.Println("Options are book, readinglist, or user.")
+    }
+}
+
+func init() {
+    if err := godotenv.Load(); err != nil {
+        log.Fatal("no .env file found")
     }
 }
 

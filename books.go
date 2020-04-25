@@ -95,6 +95,7 @@ func writeBooks(books *[]Book) {
     }
 
     gitCommit("books.json", "Edit books.json")
+    gitPush()
 }
 
 func appendBook(book *Book) {

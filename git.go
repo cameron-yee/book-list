@@ -8,6 +8,7 @@ import (
     
     "github.com/go-git/go-git/v5"
     "github.com/go-git/go-git/v5/plumbing/object"
+    "github.com/go-git/go-git/v5/plumbing/transport/http"
 )
 
 // CheckArgs should be used to ensure the right command line arguments are
@@ -54,12 +55,12 @@ func gitPullOrigin() {
     CheckIfError(err)
     
     //  // Print the latest commit that was just pulled
-    ref, err := r.Head()
-    CheckIfError(err)
-    commit, err := r.CommitObject(ref.Hash())
-    CheckIfError(err)
+    //ref, err := r.Head()
+    //CheckIfError(err)
+    //commit, err := r.CommitObject(ref.Hash())
+    //CheckIfError(err)
     
-    fmt.Println(commit)
+    //fmt.Println(commit)
 }
 
 func gitCommit(edited_file, commit_message string) {
@@ -75,10 +76,11 @@ func gitCommit(edited_file, commit_message string) {
     _, err = w.Add(edited_file)
     CheckIfError(err)
     // We can verify the current status of the worktree using the method Status.
-    Info("git status --porcelain")
-    status, err := w.Status()
-    CheckIfError(err)
-    fmt.Println(status)
+    // Info("git status --porcelain")
+    // status, err := w.Status()
+    // CheckIfError(err)
+    // fmt.Println(status)
+    
     // Commits the current staging area to the repository, with the new file
     // just created. We should provide the object.Signature of Author of the
     // commit.
@@ -93,8 +95,27 @@ func gitCommit(edited_file, commit_message string) {
     CheckIfError(err)
     
     // Prints the current HEAD to verify that all worked well.
-    Info("git show -s")
-    obj, err := r.CommitObject(commit)
+    //Info("git show -s")
+    obj, err := r.CommitObject(commit) //_ == obj
     CheckIfError(err)
     fmt.Println(obj)
+}
+
+func gitPush() {
+    r, err := git.PlainOpen(".")
+    CheckIfError(err)
+
+    Info("git push")
+    // push using default options
+
+    GITHUB_USER, _     := os.LookupEnv("GITHUB_USER")
+    GITHUB_PASSWORD, _ := os.LookupEnv("GITHUB_PASSWORD")
+    
+    err = r.Push(&git.PushOptions{
+        Auth: &http.BasicAuth{
+             Username: GITHUB_USER,
+             Password: GITHUB_PASSWORD,
+        },
+    })
+    CheckIfError(err)
 }
