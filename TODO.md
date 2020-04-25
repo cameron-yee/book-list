@@ -1,8 +1,12 @@
 # TODO
+  -- verbose printing for search/filter
+  -- **CLI**: book_list list series "Wheel of Time"
+  -- GitHub pull check to make sure merge conflicts don't ruin everything
+    * force pull before edits
   -- limit search results
-  -- clean up printing
 
 ## WIP
+  -- clean up printing
 
 ## DONE
   -- clean up CLI so it makes since
@@ -14,12 +18,17 @@
 -----------------------------------------------------------------
 
 ## Feature requests
-1. Priority level, Queue, or Named Reading Lists (playlists)
-2. Limit results
-3. Sharing with friends
-  - Entry owner
-  - JSON file imports
-  - *_books.json append to books.json
+  -- Priority level, Queue, or Named Reading Lists (playlists)
+  -- Limit results
+  -- Sharing with friends
+  -- Entry owner
+  -- JSON file imports
+  -- *_books.json append to books.json
+  -- more advanced search/filter (composite search/filter)
+  -- more verbose options
+  -- list book fields (book_list list authors) 
+    * number of books for author 
+    * allow filter (author="Bonhoeffer", read=false)
 
 ## New fields
 - Book length (short, medium, long)
