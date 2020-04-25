@@ -82,6 +82,8 @@ func listBooks(verbose bool) {
 }
 
 func writeBooks(books *[]Book) {
+    gitPullOrigin()
+    
     dataBytes, err := json.Marshal((*books))
     if err != nil {
         panic(err)
@@ -91,6 +93,8 @@ func writeBooks(books *[]Book) {
     if err != nil {
         panic(err)
     }
+
+    gitCommit("books.json", "Edit books.json")
 }
 
 func appendBook(book *Book) {
