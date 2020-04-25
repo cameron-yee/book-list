@@ -69,6 +69,8 @@ func getUserIndex(username string) int {
 }
 
 func writeUsers(users *[]User) {
+    gitPullOrigin()
+    
     dataBytes, err := json.Marshal((*users))
     if err != nil {
         panic(err)
@@ -78,6 +80,9 @@ func writeUsers(users *[]User) {
     if err != nil {
         panic(err)
     }
+    
+    gitCommit("users.json", "Edit users.json")
+    gitPush()
 }
 
 func appendUser(user *User) {
@@ -102,7 +107,7 @@ func addUser() {
         ReadingLists: nil, //??? Not sure yet
     }
 
-    appendUser(new_user)    
+    appendUser(new_user)
 }
 
 func updateUserUsername(username, new_username string) {

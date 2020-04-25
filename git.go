@@ -85,7 +85,7 @@ func gitCommit(edited_file, commit_message string) {
     // just created. We should provide the object.Signature of Author of the
     // commit.
     Info(fmt.Sprintf("git commit -m \"%s\"", commit_message))
-    commit, err := w.Commit("example go-git commit", &git.CommitOptions{
+    commit, err := w.Commit(fmt.Sprintf("%s", commit_message), &git.CommitOptions{
         Author: &object.Signature{
             Name:  "Cameron Yee",
             Email: "yee.camero23@gmail.com",

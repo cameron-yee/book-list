@@ -89,6 +89,8 @@ func listReadingLists(verbose bool) {
 }
 
 func writeReadingLists(reading_lists *[]ReadingList) {
+    gitPullOrigin()
+    
     dataBytes, err := json.Marshal((*reading_lists))
     if err != nil {
         panic(err)
@@ -98,6 +100,9 @@ func writeReadingLists(reading_lists *[]ReadingList) {
     if err != nil {
         panic(err)
     }
+    
+    gitCommit("reading-lists.json", "Edit reading-lists.json")
+    gitPush()
 }
 
 func appendReadingList(readinglist *ReadingList) {
