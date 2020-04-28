@@ -14,7 +14,7 @@ type User struct {
 }
 
 func readUsers() []User {
-    data, err := ioutil.ReadFile("./users.json")
+    data, err := ioutil.ReadFile(fmt.Sprintf("%s/users.json", getCallDirectory()))
     if err != nil {
         panic(err)
     }
@@ -80,7 +80,7 @@ func writeUsers(users *[]User) {
         panic(err)
     }
 
-    err = ioutil.WriteFile("./users.json", dataBytes, 0644)
+    err = ioutil.WriteFile(fmt.Sprintf("%s/users.json", getCallDirectory()), dataBytes, 0644)
     if err != nil {
         panic(err)
     }

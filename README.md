@@ -14,7 +14,7 @@ Set up GitHub user.
 touch .env
 ```
 
-Add `GITHUB_USER` and `GITHUB_PASSWORD` environment variables to `.env`.
+Add `NAME`, `GITHUB_USER`, `GITHUB_PASSWORD`, and `EMAIL` environment variables to `.env`.
 
 Delete and create new files called `books.json`, `users.json`, and `reading-lists.json` to start with new data.
 The files need an empty array to be valid JSON.

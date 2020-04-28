@@ -96,7 +96,9 @@ func runUpdate(update_type string) {
 }
 
 func init() {
-    if err := godotenv.Load(); err != nil {
+    var pathname string = getCallDirectory() 
+    
+    if err := godotenv.Load(fmt.Sprintf("%s/.env", pathname)); err != nil {
         log.Fatal("no .env file found")
     }
 }

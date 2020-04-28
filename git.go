@@ -42,7 +42,7 @@ func Warning(format string, args ...interface{}) {
 
 func gitPullOrigin() {
     // We instantiate a new repository targeting the given path (the .git folder)
-    r, err := git.PlainOpen(".")
+    r, err := git.PlainOpen(getCallDirectory())
     CheckIfError(err)
     
     //  // Get the working directory for the repository
@@ -65,7 +65,7 @@ func gitPullOrigin() {
 
 func gitCommit(edited_file, commit_message string) {
     // Opens an already existing repository.
-    r, err := git.PlainOpen(".") //directory .git lives in
+    r, err := git.PlainOpen(getCallDirectory()) //directory .git lives in
     CheckIfError(err)
 
     w, err := r.Worktree()
@@ -84,11 +84,14 @@ func gitCommit(edited_file, commit_message string) {
     // Commits the current staging area to the repository, with the new file
     // just created. We should provide the object.Signature of Author of the
     // commit.
+    NAME, _     := os.LookupEnv("NAME")
+    EMAIL, _ := os.LookupEnv("EMAIL")
+    
     Info(fmt.Sprintf("git commit -m \"%s\"", commit_message))
     commit, err := w.Commit(fmt.Sprintf("%s", commit_message), &git.CommitOptions{
         Author: &object.Signature{
-            Name:  "Cameron Yee",
-            Email: "yee.camero23@gmail.com",
+            Name:  NAME,
+            Email: EMAIL,
             When:  time.Now(),
         },
     })
@@ -102,7 +105,7 @@ func gitCommit(edited_file, commit_message string) {
 }
 
 func gitPush() {
-    r, err := git.PlainOpen(".")
+    r, err := git.PlainOpen(getCallDirectory())
     CheckIfError(err)
 
     Info("git push")

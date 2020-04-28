@@ -3,6 +3,8 @@ package main
 import (
     "bufio"
     "fmt"
+    "path"
+    "runtime"
     "strings"
     "os"
 )
@@ -16,4 +18,15 @@ func getInput(label string) string {
     fmt.Printf("%s: ", label)
     input, _ := reader.ReadString('\n')
     return strings.TrimSuffix(input, "\n")
+}
+
+func getCallDirectory() string {
+    _, filename, _, ok := runtime.Caller(0)
+    if !ok {
+        panic("No caller information")
+    }
+
+    var pathname string = path.Dir(filename)
+
+    return pathname
 }

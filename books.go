@@ -21,7 +21,7 @@ type Book struct {
 }
 
 func readBooks() []Book {
-    data, err := ioutil.ReadFile("./books.json")
+    data, err := ioutil.ReadFile(fmt.Sprintf("%s/books.json", getCallDirectory()))
     if err != nil {
         panic(err)
     }
@@ -90,7 +90,7 @@ func writeBooks(books *[]Book) {
         panic(err)
     }
 
-    err = ioutil.WriteFile("./books.json", dataBytes, 0644)
+    err = ioutil.WriteFile(fmt.Sprintf("%s/books.json", getCallDirectory()), dataBytes, 0644)
     if err != nil {
         panic(err)
     }

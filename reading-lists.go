@@ -14,7 +14,7 @@ type ReadingList struct {
 }
 
 func readReadingLists() []ReadingList {
-    data, err := ioutil.ReadFile("./reading-lists.json")
+    data, err := ioutil.ReadFile(fmt.Sprintf("%s/reading-lists.json", getCallDirectory()))
     if err != nil {
         panic(err)
     }
@@ -96,7 +96,7 @@ func writeReadingLists(reading_lists *[]ReadingList) {
         panic(err)
     }
 
-    err = ioutil.WriteFile("./reading-lists.json", dataBytes, 0644)
+    err = ioutil.WriteFile(fmt.Sprintf("%s/reading-lists.json", getCallDirectory()), dataBytes, 0644)
     if err != nil {
         panic(err)
     }
