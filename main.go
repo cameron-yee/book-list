@@ -121,15 +121,26 @@ func main() {
                 fmt.Println("Please provide a type to delete and a value.")
             }
         case "filter":
-            if len(os.Args) != 4 {
-                fmt.Println("Please provide a filter and value.")
-            } else {
+            if len(os.Args) == 5 {
                 value, err := strconv.ParseBool(os.Args[3])
                 if err != nil {
-                    panic(err)
+                    fmt.Println("Value must be either true or false.")
                 }
                 
-                runFilter(os.Args[2], value)
+                if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
+                    runFilter(os.Args[2], value, true)
+                } else {
+                    runFilter(os.Args[2], value, false)
+                }
+            } else if len(os.Args) == 4 {
+                value, err := strconv.ParseBool(os.Args[3])
+                if err != nil {
+                    fmt.Println("Value must be either true or false.")
+                }
+                
+                runFilter(os.Args[2], value, false)
+            } else {
+                fmt.Println("Please provide a filter and value.")
             }
         case "list":
             if len(os.Args) == 3 {
@@ -159,10 +170,16 @@ func main() {
                 fmt.Println("add/delete book or member. print readinglist.")
             }
         case "search":
-            if len(os.Args) != 4 {
-                fmt.Println("Please provide a search and value.")
+            if len(os.Args) == 5 {
+                if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
+                    runSearch(os.Args[2], os.Args[3], true)
+                } else {
+                    runSearch(os.Args[2], os.Args[3], false)
+                }
+            } else if len(os.Args) == 4 {
+                runSearch(os.Args[2], os.Args[3], false)
             } else {
-                runSearch(os.Args[2], os.Args[3])
+                fmt.Println("Please provide a search and value.")
             }
         case "update":
             if len(os.Args) != 3 {
