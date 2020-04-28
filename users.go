@@ -8,7 +8,8 @@ import (
 )
 
 type User struct {
-    Username       string `json:"username"`
+    GitHubUser     string   `json:"githubuser"`
+    Username       string   `json:"username"`
     ReadingLists   []string `json:"readingLists"` 
 }
 
@@ -36,13 +37,16 @@ func runUpdateUser() {
     switch strings.ToLower(field) {
         case "username":
             updateUserUsername(username, value)
+        case "githubuser":
+            updateUserGitHubUser(username, value)
         default:
-            fmt.Println("Options are username.")
+            fmt.Println("Options are username and githubuser.")
     }
 }
 
 func printUser(user User) {
     colorPrintField("Username", user.Username)
+    colorPrintField("GitHubUser", user.GitHubUser)
     colorPrintField("Reading Lists", strings.Join(user.ReadingLists[:], ", "))
     
     fmt.Println("-------------------------------------------------------------")
@@ -95,6 +99,7 @@ func appendUser(user *User) {
 
 func addUser() {
     username := getInput("Username")
+    githubuser := getInput("GitHubUser")
 
     var user_index int = getUserIndex(username)
     if user_index != -1 {
@@ -103,11 +108,24 @@ func addUser() {
     }
 
     var new_user *User = &User{
+        GitHubUser: githubuser,
         Username: username,
         ReadingLists: nil, //??? Not sure yet
     }
 
     appendUser(new_user)
+}
+
+func updateUserGitHubUser(username, new_githubuser string) {
+    var user_index int = getUserIndex(username)
+    if user_index != -1 {
+        var users []User = readUsers()
+        users[user_index].GitHubUser = new_githubuser
+        writeUsers(&users)
+    } else {
+        fmt.Printf("User doesn't exist with username: \"%s\".\n", username)
+        return
+    }
 }
 
 func updateUserUsername(username, new_username string) {

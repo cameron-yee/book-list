@@ -4,6 +4,7 @@ import (
     "encoding/json"
     "fmt"
     "io/ioutil"
+    "os"
     "strconv"
     "strings"
 )
@@ -134,6 +135,21 @@ func addBook() {
     
     genre := getInput("Genre")
     entry_owner := getInput("Entry Owner")
+
+    if entry_owner == "" {
+        GITHUB_USER, _ := os.LookupEnv("GITHUB_USER")
+        entry_owner = GITHUB_USER
+
+        var users []User = readUsers()
+        
+        for i := 0; i < len(users); i++ {
+            if users[i].GitHubUser == GITHUB_USER {
+                entry_owner = users[i].Username
+                break
+            }
+        }
+    }
+    
     var user_index  = getUserIndex(entry_owner)
     if user_index == -1 {
         fmt.Printf("No user found with username: %s\n", entry_owner)

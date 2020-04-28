@@ -9,16 +9,19 @@ Clone the repo.
 git clone https://github.com/cameron-yee/book-list.git
 ```
 
-Delete and create a new file called `books.json` to start with new data.
+Set up GitHub user.
 ```bash
-rm books.json && touch books.json
+touch .env
 ```
 
-Write the initial structure to `books.json`.
-```
-{
-  "books": []
-}
+Add `GITHUB_USER` and `GITHUB_PASSWORD` environment variables to `.env`.
+
+Delete and create new files called `books.json`, `users.json`, and `reading-lists.json` to start with new data.
+The files need an empty array to be valid JSON.
+```bash
+rm books.json && echo "[]" >>  books.json
+rm users.json && echo "[]" >> users.json
+rm reading-lists.json && echo "[]" >> reading-lists.json
 ```
 
 Build the package.
@@ -26,13 +29,13 @@ Build the package.
 go build
 ```
 
-Alias the executable in ~/.zshrc.
+Add a symlink for the executable.
 ```bash
-alias book_list=<PATH-TO-CLONE>/book-list
+sudo ln -s <PATH-TO-CLONE>/book-list /usr/local/bin/booklist
 ```
 
 Run commands.
 ```bash
-book_list help
+booklist help
 ```
 
