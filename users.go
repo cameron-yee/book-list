@@ -44,10 +44,10 @@ func runUpdateUser() {
     }
 }
 
-func printUser(user User) {
-    colorPrintField("Username", user.Username)
-    colorPrintField("GitHubUser", user.GitHubUser)
-    colorPrintField("Reading Lists", strings.Join(user.ReadingLists[:], ", "))
+func printUser(user *User) {
+    colorPrintField("Username", (*user).Username)
+    colorPrintField("GitHubUser", (*user).GitHubUser)
+    colorPrintField("Reading Lists", strings.Join((*user).ReadingLists[:], ", "))
     
     fmt.Println("-------------------------------------------------------------")
 }
@@ -56,7 +56,7 @@ func listUsers() {
     var users []User = readUsers()
 
     for i := 0; i < len(users); i++ {
-        printUser(users[i])
+        printUser(&users[i])
     }
 }
 

@@ -73,7 +73,7 @@ func runReadingList(command, value string) {
 
             if reading_list_index != -1 {
                 var readinglists []ReadingList = readReadingLists()
-                printReadingList(readinglists[reading_list_index], false) 
+                printReadingList(&readinglists[reading_list_index], false) 
             } else {
                 fmt.Printf("No readinglist with title: \"%s\".\n", value)
             }
@@ -161,7 +161,7 @@ func main() {
                 var reading_list_index = getReadingListIndex(os.Args[3])
                 if reading_list_index != -1 {
                     if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
-                        printReadingList(readinglists[reading_list_index], true)
+                        printReadingList(&readinglists[reading_list_index], true)
                     }
                 } else {
                     fmt.Printf("No readinglist with title: \"%s\".\n", os.Args[3])

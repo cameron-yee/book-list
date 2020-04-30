@@ -54,24 +54,24 @@ func runUpdateReadingList() {
     }
 }
             
-func printReadingList(reading_list ReadingList, verbose bool) {
-    colorPrintField("Title", reading_list.Title)
-    colorPrintField("Members", strings.Join(reading_list.Members[:], ", "))
+func printReadingList(reading_list *ReadingList, verbose bool) {
+    colorPrintField("Title", (*reading_list).Title)
+    colorPrintField("Members", strings.Join((*reading_list).Members[:], ", "))
 
     var books []Book = readBooks()
 
     colorPrintField("Books", "")
-    if len(reading_list.Books) == 0 {
+    if len((*reading_list).Books) == 0 {
         fmt.Println("NO BOOKS IN READING LIST.") 
     } else {
         fmt.Println("-------------------------------------------------------------")
         fmt.Println("-------------------------------------------------------------")
     }
     
-    for i := 0; i < len(reading_list.Books); i++ {
+    for i := 0; i < len((*reading_list).Books); i++ {
         for j := 0; j < len(books); j++ {
-            if strings.ToLower(books[j].Title) == strings.ToLower(reading_list.Books[i]) {
-                printBook(books[j], true, verbose)
+            if strings.ToLower(books[j].Title) == strings.ToLower((*reading_list).Books[i]) {
+                printBook(&books[j], true, verbose)
                 break
             }
         }
@@ -84,7 +84,7 @@ func listReadingLists(verbose bool) {
     var reading_lists []ReadingList = readReadingLists()
 
     for i := 0; i < len(reading_lists); i++ {
-        printReadingList(reading_lists[i], verbose)
+        printReadingList(&reading_lists[i], verbose)
     }
 }
 
