@@ -48,6 +48,8 @@ func runDelete(delete_type, value string) {
 }
 
 func runList(list_type string, verbose bool) {
+    gitPullOrigin()
+    
     switch strings.ToLower(list_type) {
         case "books":
             listBooks(verbose)
