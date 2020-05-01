@@ -1,3 +1,5 @@
 .DS_Store
 .env
+*.swp
 book-list
+book-list.exe
