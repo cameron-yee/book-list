@@ -23,34 +23,40 @@ func help() {
 
 func runAdd(add_type string) {
     switch strings.ToLower(add_type) {
+        case "book":
+            addBook()
         case "readinglist":
             addReadingList()
         case "user":
             addUser()
         default:
-            addBook()
+            fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(add_type))
     }
 }
 
 func runDelete(delete_type, value string) {
     switch strings.ToLower(delete_type) {
+        case "book":
+            deleteBook(value)
         case "readinglist":
             deleteReadingList(value)
         case "user":
             deleteUser(value)
         default:
-            deleteBook(value)
+            fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(delete_type))
     }
 }
 
 func runList(list_type string, verbose bool) {
     switch strings.ToLower(list_type) {
+        case "books":
+            listBooks(verbose)
         case "readinglists":
             listReadingLists(verbose)
         case "users":
             listUsers()
         default:
-            listBooks(verbose)
+            fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(list_type))
     }
 }
 
