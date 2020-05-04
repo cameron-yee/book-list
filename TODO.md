@@ -1,15 +1,18 @@
 # TODO
-  -- verbose printing for search/filter
+  -- **CLI**: previous field editing (":back")
   -- **CLI**: book_list list series "Wheel of Time"
-  -- limit search results
+  -- **CLI**: print defaults (owned (true/false):)
+  -- **CLI**: more options for boolean fields (true/false/t/f/yes/no/y/n)
+  -- limit search results (flag -l 10 --limit 10)
+  -- change read field to readBy field ("Cameron Yee, Jordan Yee")
 
 ## WIP
-  -- clean up printing
-  -- GitHub pull check to make sure merge conflicts don't ruin everything
-    * force pull before edits
-    * Done for books. Add to users, reading-lists 
+
 
 ## DONE
+  -- GitHub pull check to make sure merge conflicts don't ruin everything
+  -- clean up printing
+  -- verbose printing for search/filter
   -- clean up CLI so it makes since
   -- change panic calls to fmt.Print
   -- Add CLI functions for users and reading-lists
@@ -19,12 +22,9 @@
 -----------------------------------------------------------------
 
 ## Feature requests
-  -- Priority level, Queue, or Named Reading Lists (playlists)
-  -- Limit results
-  -- Sharing with friends
-  -- Entry owner
+  -- change genre to a list of predefined fields (genre.json)
   -- JSON file imports
-  -- *_books.json append to books.json
+  -- *__books.json append to books.json
   -- more advanced search/filter (composite search/filter)
   -- more verbose options
   -- list book fields (book_list list authors) 
