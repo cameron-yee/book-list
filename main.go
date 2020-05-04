@@ -49,6 +49,10 @@ func getFlag(flag_name string, flag_list []Flag) *Flag {
     return nil 
 }
 
+func getFlagValue(f *Flag) string {
+    return (*f).Value
+}
+
 func help() {
     fmt.Println("Commands:")
     fmt.Println("\tadd: Add a book, readinglist, or user. Additionally, add a member to a reading list.")
@@ -108,7 +112,7 @@ func runList(args []string, flags []Flag) {
         }
 
         if limit_flag != nil {
-            i_value, err := strconv.ParseInt((*limit_flag).Value, 10, 0)
+            i_value, err := strconv.ParseInt(getFlagValue(limit_flag), 10, 0)
             if err != nil {
                 fmt.Println("Limit value must be an integer.")
                 fmt.Printf("%v\n", err)
@@ -131,7 +135,24 @@ func runList(args []string, flags []Flag) {
     }
 }
 
-func runReadingList(command, value string) {
+//func runReadingList(command, value string) {
+func runReadingList(args []string, flags []Flag) {
+    if len(args) != 4 {
+        fmt.Println("Please provide a type to list.")
+    }
+    
+    var verbose bool
+    if len(flags) > 0 {
+        var verbose_flag *Flag = getFlag("verbose", flags)
+
+        if verbose_flag != nil {
+            verbose = true
+        }
+    }
+
+    var command string = args[2]
+    var value string = args[3]
+    
     switch strings.ToLower(command) {
         case "add":
             if strings.ToLower(value) == "book" {
@@ -150,7 +171,7 @@ func runReadingList(command, value string) {
 
             if reading_list_index != -1 {
                 var readinglists []ReadingList = readReadingLists()
-                printReadingList(&readinglists[reading_list_index], false) 
+                printReadingList(&readinglists[reading_list_index], verbose) 
             } else {
                 fmt.Printf("No readinglist with title: \"%s\".\n", value)
             }
@@ -272,22 +293,23 @@ func main() {
             //     fmt.Println("Please provide a type to list.")
             // }
         case "readinglist":
-            if len(os.Args) == 5 {
-                var readinglists []ReadingList = readReadingLists()
+            runReadingList(args, flags)
+            // if len(os.Args) == 5 {
+            //     var readinglists []ReadingList = readReadingLists()
 
-                var reading_list_index = getReadingListIndex(os.Args[3])
-                if reading_list_index != -1 {
-                    if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
-                        printReadingList(&readinglists[reading_list_index], true)
-                    }
-                } else {
-                    fmt.Printf("No readinglist with title: \"%s\".\n", os.Args[3])
-                }
-            } else if len(os.Args) == 4 {
-                runReadingList(os.Args[2], os.Args[3])
-            } else {
-                fmt.Println("add/delete book or member. print readinglist.")
-            }
+            //     var reading_list_index = getReadingListIndex(os.Args[3])
+            //     if reading_list_index != -1 {
+            //         if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
+            //             printReadingList(&readinglists[reading_list_index], true)
+            //         }
+            //     } else {
+            //         fmt.Printf("No readinglist with title: \"%s\".\n", os.Args[3])
+            //     }
+            // } else if len(os.Args) == 4 {
+            //     runReadingList(os.Args[2], os.Args[3])
+            // } else {
+            //     fmt.Println("add/delete book or member. print readinglist.")
+            // }
         case "search":
             if len(os.Args) == 5 {
                 if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
