@@ -80,10 +80,15 @@ func printReadingList(reading_list *ReadingList, verbose bool) {
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listReadingLists(verbose bool) {
+func listReadingLists(verbose bool, limit int) {
     var reading_lists []ReadingList = readReadingLists()
 
-    for i := 0; i < len(reading_lists); i++ {
+    var until = len(reading_lists)
+    if limit != 0 {
+        until = limit
+    }
+
+    for i := 0; i < until; i++ {
         printReadingList(&reading_lists[i], verbose)
     }
 }

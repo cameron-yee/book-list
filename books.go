@@ -74,10 +74,15 @@ func printBook(book *Book, indent bool, verbose bool) {
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listBooks(verbose bool) {
+func listBooks(verbose bool, limit int) {
     var books []Book = readBooks()
 
-    for i := 0; i < len(books); i++ {
+    var until int = len(books)
+    if limit != 0 {
+        until = limit
+    }
+
+    for i := 0; i < until; i++ {
         printBook(&books[i], false, verbose)
     }
 }

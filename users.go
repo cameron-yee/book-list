@@ -55,10 +55,16 @@ func printUser(user *User, verbose bool) {
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listUsers(verbose bool) {
+func listUsers(verbose bool, limit int) {
     var users []User = readUsers()
+    
+    var until = len(users)
+    if limit != 0 {
+        until = limit
+    }
 
-    for i := 0; i < len(users); i++ {
+
+    for i := 0; i < until; i++ {
         if verbose {
             printUser(&users[i], true)
         } else {
