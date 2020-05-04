@@ -89,7 +89,7 @@ func listReadingLists(verbose bool) {
 }
 
 func writeReadingLists(reading_lists *[]ReadingList) {
-    gitPullOrigin()
+    gitPullOrigin(true)
     
     dataBytes, err := json.Marshal((*reading_lists))
     if err != nil {

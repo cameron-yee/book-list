@@ -40,7 +40,7 @@ func Warning(format string, args ...interface{}) {
   fmt.Printf("\x1b[36;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }
 
-func gitPullOrigin() {
+func gitPullOrigin(verbose bool) {
     // We instantiate a new repository targeting the given path (the .git folder)
     r, err := git.PlainOpen(getCallDirectory())
     CheckIfError(err)
@@ -50,7 +50,10 @@ func gitPullOrigin() {
     CheckIfError(err)
     
     //  // Pull the latest changes from the origin remote and merge into the current branch
-    Info("git pull origin")
+    if verbose {
+        Info("git pull origin")
+    }
+    
     err = w.Pull(&git.PullOptions{RemoteName: "origin"})
     CheckIfError(err)
     

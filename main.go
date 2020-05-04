@@ -10,6 +10,40 @@ import (
     "github.com/joho/godotenv"
 )
 
+type Flag struct {
+    Name string
+    Short string
+    Long  string
+}
+
+func constructFlag(name, short, long string) Flag {
+    var new_flag Flag = Flag{
+        Name: name,
+        Short: short,
+        Long: long,
+    }
+
+    return new_flag
+}
+
+func getValidFlags() []Flag {
+    var verbose Flag = constructFlag("verbose", "-v", "--verbose")
+
+    var flags []Flag = []Flag{verbose}
+
+    return flags 
+}
+
+func isFlagInList(flag_name string, flag_list []string) bool {
+    for i := 0; i < len(flag_list); i++ {
+        if strings.ToLower(flag_name) == strings.ToLower(flag_list[i]) {
+            return true
+        }
+    }
+
+    return false
+}
+
 func help() {
     fmt.Println("Commands:")
     fmt.Println("\tadd: Add a book, readinglist, or user. Additionally, add a member to a reading list.")
@@ -47,8 +81,20 @@ func runDelete(delete_type, value string) {
     }
 }
 
-func runList(list_type string, verbose bool) {
-    gitPullOrigin()
+//func runList(list_type string, verbose bool) {
+func runList(args []string, flags []string) {
+    gitPullOrigin(false)
+    
+    if len(args) != 3 {
+        fmt.Println("Please provide a type to list.")
+    }
+    
+    var list_type string = args[2]
+
+    var verbose bool
+    if len(flags) > 0 {
+        verbose = isFlagInList("verbose", flags)
+    }
     
     switch strings.ToLower(list_type) {
         case "books":
@@ -56,7 +102,7 @@ func runList(list_type string, verbose bool) {
         case "readinglists":
             listReadingLists(verbose)
         case "users":
-            listUsers()
+            listUsers(verbose)
         default:
             fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(list_type))
     }
@@ -103,6 +149,33 @@ func runUpdate(update_type string) {
     }
 }
 
+func ValidateFlag(flag string) (is_valid bool, flag_name string) {
+    var valid_flags []Flag = getValidFlags()
+
+    for i := 0; i < len(valid_flags); i++ {
+        if flag == valid_flags[i].Short || flag == valid_flags[i].Long {
+            is_valid = true
+            flag_name = valid_flags[i].Name
+            return
+        }
+    }
+
+    return
+}
+
+func GetCLIArgs(argslist []string) (args, flags []string) {
+    for i := 0; i < len(argslist); i++ {
+        is_valid, flag_name := ValidateFlag(argslist[i])
+        if is_valid {
+            flags = append(flags, flag_name)
+        } else {
+            args = append(args, argslist[i])
+        } 
+    }
+
+    return
+}
+
 func init() {
     var pathname string = getCallDirectory() 
     
@@ -112,10 +185,12 @@ func init() {
 }
 
 func main() {
-    if len(os.Args) < 2 {
+    if len(os.Args) < 3 {
         help()
         return
     }
+
+    args, flags := GetCLIArgs(os.Args)
 
     switch command := os.Args[1]; command {
         case "add":
@@ -153,15 +228,16 @@ func main() {
                 fmt.Println("Please provide a filter and value.")
             }
         case "list":
-            if len(os.Args) == 3 {
-                runList(os.Args[2], false)
-            } else if len(os.Args) == 4 {
-                if os.Args[3] == "--verbose" || os.Args[3] == "-v" {
-                    runList(os.Args[2], true)
-                }
-            } else {
-                fmt.Println("Please provide a type to list.")
-            }
+            runList(args, flags)
+            // if len(os.Args) == 3 {
+            //     runList(os.Args[2], false)
+            // } else if len(os.Args) == 4 {
+            //     if os.Args[3] == "--verbose" || os.Args[3] == "-v" {
+            //         runList(os.Args[2], true)
+            //     }
+            // } else {
+            //     fmt.Println("Please provide a type to list.")
+            // }
         case "readinglist":
             if len(os.Args) == 5 {
                 var readinglists []ReadingList = readReadingLists()

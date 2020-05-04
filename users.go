@@ -44,19 +44,26 @@ func runUpdateUser() {
     }
 }
 
-func printUser(user *User) {
+func printUser(user *User, verbose bool) {
     colorPrintField("Username", (*user).Username)
-    colorPrintField("GitHubUser", (*user).GitHubUser)
-    colorPrintField("Reading Lists", strings.Join((*user).ReadingLists[:], ", "))
+
+    if verbose {
+        colorPrintField("GitHubUser", (*user).GitHubUser)
+        colorPrintField("Reading Lists", strings.Join((*user).ReadingLists[:], ", "))
+    }
     
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listUsers() {
+func listUsers(verbose bool) {
     var users []User = readUsers()
 
     for i := 0; i < len(users); i++ {
-        printUser(&users[i])
+        if verbose {
+            printUser(&users[i], true)
+        } else {
+            printUser(&users[i], false)
+        }
     }
 }
 
@@ -73,7 +80,7 @@ func getUserIndex(username string) int {
 }
 
 func writeUsers(users *[]User) {
-    gitPullOrigin()
+    gitPullOrigin(true)
     
     dataBytes, err := json.Marshal((*users))
     if err != nil {

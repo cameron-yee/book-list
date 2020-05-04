@@ -83,7 +83,7 @@ func listBooks(verbose bool) {
 }
 
 func writeBooks(books *[]Book) {
-    gitPullOrigin()
+    gitPullOrigin(true)
     
     dataBytes, err := json.Marshal((*books))
     if err != nil {
