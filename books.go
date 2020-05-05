@@ -10,14 +10,14 @@ import (
 )
 
 type Book struct {
-    Title         string               `json:"title"`
-    Series        string               `json:"series"`
-    Author        string               `json:"author"`
-    RecommendedBy string               `json:"recommendedBy"`
-    Read          bool                 `json:"read"`
-    Owned         bool                 `json:"owned"`
-    Genre         string               `json:"genre"`
-    EntryOwner    string               `json:"entryOwner"`
+    Title         string    `json:"title"`
+    Series        string    `json:"series"`
+    Author        string    `json:"author"`
+    RecommendedBy string    `json:"recommendedBy"`
+    ReadBy        []string  `json:"readBy"`
+    Owned         bool      `json:"owned"`
+    Genre         string    `json:"genre"`
+    EntryOwner    string    `json:"entryOwner"`
 }
 
 func readBooks() []Book {
@@ -65,7 +65,7 @@ func printBook(book *Book, indent bool, verbose bool) {
         colorPrintField(fmt.Sprintf("%sSeries", prefix), (*book).Series)
         colorPrintField(fmt.Sprintf("%sAuthor", prefix), (*book).Author)
         colorPrintField(fmt.Sprintf("%sRecommended By", prefix), (*book).RecommendedBy)
-        colorPrintField(fmt.Sprintf("%sRead", prefix), strconv.FormatBool((*book).Read))
+        colorPrintField(fmt.Sprintf("%sReadBy", prefix), strings.Join((*book).ReadBy[:], ", "))
         colorPrintField(fmt.Sprintf("%sOwned", prefix), strconv.FormatBool((*book).Owned))
         colorPrintField(fmt.Sprintf("%sGenre", prefix), (*book).Genre)
         colorPrintField(fmt.Sprintf("%sEntryOwner", prefix), (*book).EntryOwner)
@@ -112,6 +112,24 @@ func appendBook(book *Book) {
     writeBooks(&books)
 }
 
+func updateBookReadBy(read_by *[]string) {
+    var cont bool = true
+    for cont {
+        person := getInput("UserName: ")
+        (*read_by) = append((*read_by), person)
+        
+        cont_prompt := getInput("Add another person?")
+        var cont_strings []string = []string{"y", "yes", ""}
+
+        cont = false
+        for i := 0; i < len(cont_strings); i++ {
+            if strings.ToLower(cont_prompt) == cont_strings[i] {
+                cont = true
+            } 
+        }
+    }
+}
+
 func addBook() {
     title := getInput("Title")
 
@@ -124,13 +142,11 @@ func addBook() {
     
     series := getInput("Series")
     author := getInput("Author")
-    recommended_by := getInput("Recommended By")
-    
-    read := getInput("Read")
-    read_bool := false
-    if strings.ToLower(read) == "true" {
-        read_bool = true    
-    }
+    recommended_by := getInput("Recommended By: ")
+
+    fmt.Println("Add people that have read this book:")
+    var read_by []string
+    updateBookReadBy(&read_by)
     
     owned := getInput("Owned")
     owned_bool := false
@@ -167,7 +183,7 @@ func addBook() {
         Series: series,
         Author: author,
         RecommendedBy: recommended_by,
-        Read: read_bool,
+        ReadBy: read_by,
         Owned: owned_bool,
         Genre: genre,
         EntryOwner: entry_owner,
@@ -190,9 +206,10 @@ func runUpdateBook() {
             updateBookAuthor(book_title, value)
         case "recommendedby":
             updateBookRecommendedBy(book_title, value)
-        case "read":
-            value_as_bool, _ := strconv.ParseBool(value)
-            updateBookRead(book_title, value_as_bool)
+        case "readBy":
+            var books []Book = readBooks()
+            var i int = getBookIndex(book_title)
+            updateBookReadBy(&books[i].ReadBy)
         case "owned":
             value_as_bool, _ := strconv.ParseBool(value)
             updateBookOwned(book_title, value_as_bool)
@@ -274,17 +291,17 @@ func updateBookRecommendedBy(book_title, recommended_by_value string) {
 
 }
 
-func updateBookRead(book_title string, read_value bool) {
-    var book_index int = getBookIndex(book_title)
+// func updateBookRead(book_title string, read_value bool) {
+//     var book_index int = getBookIndex(book_title)
     
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].Read = read_value
-        writeBooks(&books)
-    } else {
-        printCantFindBook(book_title)
-    }
-}
+//     if book_index != -1 {
+//         var books []Book = readBooks()
+//         books[book_index].Read = read_value
+//         writeBooks(&books)
+//     } else {
+//         printCantFindBook(book_title)
+//     }
+// }
 
 func updateBookOwned(book_title string, owned_value bool) {
     var book_index int = getBookIndex(book_title)

@@ -15,7 +15,7 @@ func colorPrintField(label, str string) {
 
 func getInput(label string) string {
     reader := bufio.NewReader(os.Stdin)
-    fmt.Printf("%s: ", label)
+    fmt.Printf("%s", label)
     input, _ := reader.ReadString('\n')
     return strings.TrimSuffix(input, "\n")
 }

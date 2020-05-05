@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "strings"
 )
 
@@ -15,6 +16,8 @@ func runSearch(label, search_term string, verbose bool) {
             searchRecommendedBy(search_term, verbose)
         case "genre":
             searchGenre(search_term, verbose)
+        case "readby":
+            searchReadBy(search_term, verbose)
         default:
             searchTitle(search_term, verbose)
     }
@@ -25,7 +28,7 @@ func runFilter(label string, value bool, verbose bool) {
         case "owned":
             filterOwned(value, verbose)
         default:
-            filterRead(value, verbose)
+            fmt.Println("The only filter allowed is \"owned\"")
     }
 }
 
@@ -39,12 +42,14 @@ func filterOwned(value, verbose bool) {
     }
 }
 
-func filterRead(value, verbose bool) {
+func searchReadBy(search_term string, verbose bool) {
     var books []Book = readBooks()
 
     for i := 0; i < len(books); i++ {
-        if books[i].Read == value {
-            printBook(&books[i], false, verbose)
+        for j := 0; j < len(books[i].ReadBy); j++ {
+            if strings.Contains(strings.ToLower(books[i].ReadBy[j]), strings.ToLower(search_term)) {
+                printBook(&books[i], false, verbose)
+            }
         }
     }
 }

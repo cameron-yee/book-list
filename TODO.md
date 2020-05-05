@@ -3,13 +3,12 @@
   -- **CLI**: book_list list series "Wheel of Time"
   -- **CLI**: print defaults (owned (true/false):)
   -- **CLI**: more options for boolean fields (true/false/t/f/yes/no/y/n)
-  -- limit search results (flag -l 10 --limit 10)
-  -- change read field to readBy field ("Cameron Yee, Jordan Yee")
 
 ## WIP
 
-
 ## DONE
+  -- limit search results (flag -l 10 --limit 10)
+  -- change read field to readBy field ("Cameron Yee, Jordan Yee")
   -- GitHub pull check to make sure merge conflicts don't ruin everything
   -- clean up printing
   -- verbose printing for search/filter
