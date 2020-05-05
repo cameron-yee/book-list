@@ -30,9 +30,9 @@ func readUsers() []User {
 }
 
 func runUpdateUser() {
-    username := getInput("Username")
-    field := getInput("Field")
-    value := getInput("New value")
+    username := getInput("Username: ")
+    field := getInput("Field: ")
+    value := getInput("New Value: ")
     
     switch strings.ToLower(field) {
         case "username":
@@ -111,8 +111,8 @@ func appendUser(user *User) {
 }
 
 func addUser() {
-    username := getInput("Username")
-    githubuser := getInput("GitHubUser")
+    username := getInput("Username: ")
+    githubuser := getInput("GitHubUser: ")
 
     var user_index int = getUserIndex(username)
     if user_index != -1 {

@@ -42,9 +42,9 @@ func getReadingListIndex(reading_list_title string) int {
 }
 
 func runUpdateReadingList() {
-    reading_list_title := getInput("Reading List Title")
-    field := getInput("Field")
-    value := getInput("New Value")
+    reading_list_title := getInput("Reading List Title: ")
+    field := getInput("Field: ")
+    value := getInput("New Value: ")
     
     switch strings.ToLower(field) {
         case "title":
@@ -119,7 +119,7 @@ func appendReadingList(readinglist *ReadingList) {
 }
 
 func addReadingList() {
-    title := getInput("Title")
+    title := getInput("Title: ")
 
     var reading_list_index = getReadingListIndex(title)
     if reading_list_index != -1 {
@@ -127,7 +127,7 @@ func addReadingList() {
         return
     } 
     
-    username := getInput("Username")
+    username := getInput("Username: ")
 
     var user_index int = getUserIndex(username)
     if user_index == -1 {
@@ -166,8 +166,8 @@ func updateReadingListTitle(reading_list_title, new_title string) {
 }
 
 func addBookToReadingList() {
-    title := getInput("Reading List Title")
-    book_title := getInput("Book Title")
+    title := getInput("Reading List Title: ")
+    book_title := getInput("Book Title: ")
 
     var readinglists []ReadingList = readReadingLists()
 
@@ -199,8 +199,8 @@ func addBookToReadingList() {
 }
 
 func addMemberToReadingList() {
-    title := getInput("Reading List Title")
-    new_member := getInput("New Member Username")
+    title := getInput("Reading List Title: ")
+    new_member := getInput("New Member Username: ")
 
     var readinglists []ReadingList = readReadingLists()
     var users []User = readUsers()
@@ -236,8 +236,8 @@ func addMemberToReadingList() {
 }
 
 func deleteBookFromReadingList() {
-    title := getInput("Reading List Title")
-    book_title := getInput("Book Title")
+    title := getInput("Reading List Title: ")
+    book_title := getInput("Book Title: ")
     
     var readinglists []ReadingList = readReadingLists()
 
@@ -264,8 +264,8 @@ func deleteBookFromReadingList() {
 }
 
 func deleteMemberFromReadingList() {
-    title := getInput("Reading List Title")
-    member := getInput("Member Username")
+    title := getInput("Reading List Title: ")
+    member := getInput("Member Username: ")
     
     var readinglists []ReadingList = readReadingLists()
     var users []User = readUsers()

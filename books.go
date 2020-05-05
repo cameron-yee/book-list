@@ -112,13 +112,13 @@ func appendBook(book *Book) {
     writeBooks(&books)
 }
 
-func updateBookReadBy(read_by *[]string) {
+func addBookReadBy(read_by *[]string) {
     var cont bool = true
     for cont {
         person := getInput("UserName: ")
         (*read_by) = append((*read_by), person)
         
-        cont_prompt := getInput("Add another person?")
+        cont_prompt := getInput("Add another person? (y/n) ")
         var cont_strings []string = []string{"y", "yes", ""}
 
         cont = false
@@ -131,7 +131,7 @@ func updateBookReadBy(read_by *[]string) {
 }
 
 func addBook() {
-    title := getInput("Title")
+    title := getInput("Title: ")
 
     var book_index int = getBookIndex(title)
     
@@ -140,13 +140,13 @@ func addBook() {
         return
     }
     
-    series := getInput("Series")
-    author := getInput("Author")
+    series := getInput("Series: ")
+    author := getInput("Author: ")
     recommended_by := getInput("Recommended By: ")
 
     fmt.Println("Add people that have read this book:")
     var read_by []string
-    updateBookReadBy(&read_by)
+    addBookReadBy(&read_by)
     
     owned := getInput("Owned")
     owned_bool := false
@@ -154,8 +154,8 @@ func addBook() {
         owned_bool = true    
     }
     
-    genre := getInput("Genre")
-    entry_owner := getInput("Entry Owner")
+    genre := getInput("Genre: ")
+    entry_owner := getInput("Entry Owner: ")
 
     if entry_owner == "" {
         GITHUB_USER, _ := os.LookupEnv("GITHUB_USER")
@@ -193,32 +193,39 @@ func addBook() {
 }
 
 func runUpdateBook() {
-    book_title := getInput("Book Title")
-    field := getInput("Field")
-    value := getInput("New Value")
+    book_title := getInput("Book Title: ")
+    field := getInput("Field: ")
     
     switch strings.ToLower(field) {
         case "title":
+            value := getInput("New Value: ")
             updateBookTitle(book_title, value)
         case "series":
+            value := getInput("New Value: ")
             updateBookSeries(book_title, value)
         case "author":
+            value := getInput("New Value: ")
             updateBookAuthor(book_title, value)
         case "recommendedby":
+            value := getInput("New Value: ")
             updateBookRecommendedBy(book_title, value)
-        case "readBy":
+        case "readby":
             var books []Book = readBooks()
             var i int = getBookIndex(book_title)
-            updateBookReadBy(&books[i].ReadBy)
+            addBookReadBy(&books[i].ReadBy)
+            writeBooks(&books)
         case "owned":
+            value := getInput("New Value: ")
             value_as_bool, _ := strconv.ParseBool(value)
             updateBookOwned(book_title, value_as_bool)
         case "genre":
+            value := getInput("New Value: ")
             updateBookGenre(book_title, value)
         case "entryowner":
+            value := getInput("New Value: ")
             updateBookEntryOwner(book_title, value)
         default:
-            fmt.Println("Options are title, series, author, recommendedby, read, owned, genre, or entryowner.")
+            fmt.Println("Options are title, series, author, recommendedby, readby, owned, genre, or entryowner.")
     }
 }  
 
