@@ -4,7 +4,6 @@ import (
     "fmt"
     "log"
     "os"
-    "strconv"
     "strings"
 
     "github.com/joho/godotenv"
@@ -47,7 +46,6 @@ func runDelete(delete_type, value string) {
     }
 }
 
-//func runList(list_type string, verbose bool) {
 func runList(args []string, flags []Flag) {
     gitPullOrigin(false)
     
@@ -56,39 +54,11 @@ func runList(args []string, flags []Flag) {
     }
     
     var list_type string = args[2]
-
-    var verbose bool
-    var vverbose bool
-    var limit int
     
-    if len(flags) > 0 {
-        var verbose_flag *Flag = GetFlag("verbose", flags)
-        var limit_flag *Flag = GetFlag("limit", flags)
+    var verbose bool = getExistsFlagValue("verbose", &flags)
+    var vverbose bool = getExistsFlagValue("vverbose", &flags)
+    var limit int = getStoreIntFlagValue("limit", &flags)
 
-        if verbose_flag != nil {
-            verbose = true
-        }
-        
-        if len(flags) > 0 {
-            var vverbose_flag *Flag = GetFlag("vverbose", flags)
-
-            if vverbose_flag != nil {
-                vverbose = true
-            }
-        }
-
-        if limit_flag != nil {
-            i_value, err := strconv.ParseInt(GetFlagValue(limit_flag), 10, 0)
-            if err != nil {
-                fmt.Println("Limit value must be an integer.")
-                fmt.Printf("%v\n", err)
-                os.Exit(1)
-            }
-
-            limit = int(i_value)
-        }
-    }
-    
     switch strings.ToLower(list_type) {
         case "books":
             listBooks(verbose, vverbose, limit)
@@ -101,32 +71,16 @@ func runList(args []string, flags []Flag) {
     }
 }
 
-//func runReadingList(command, value string) {
 func runReadingList(args []string, flags []Flag) {
     if len(args) != 4 {
         fmt.Println("Please provide a type to list.")
     }
     
-    var verbose bool
-    if len(flags) > 0 {
-        var verbose_flag *Flag = GetFlag("verbose", flags)
-
-        if verbose_flag != nil {
-            verbose = true
-        }
-    }
-    
-    var vverbose bool
-    if len(flags) > 0 {
-        var vverbose_flag *Flag = GetFlag("vverbose", flags)
-
-        if vverbose_flag != nil {
-            vverbose = true
-        }
-    }
-
     var command string = args[2]
     var value string = args[3]
+
+    var verbose bool = getExistsFlagValue("verbose", &flags)
+    var vverbose bool = getExistsFlagValue("vverbose", &flags)
     
     switch strings.ToLower(command) {
         case "add":

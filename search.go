@@ -4,7 +4,6 @@ import (
     "fmt"
     "strconv"
     "strings"
-    "os"
 )
 
 func runSearch(args []string, flags []Flag) {
@@ -12,40 +11,13 @@ func runSearch(args []string, flags []Flag) {
         fmt.Println("Please provide a field and value.")
     }
     
-    var verbose bool
-    var vverbose bool
-    var limit int
-    
-    if len(flags) > 0 {
-        var verbose_flag *Flag = GetFlag("verbose", flags)
-        var limit_flag *Flag = GetFlag("limit", flags)
-
-        if verbose_flag != nil {
-            verbose = true
-        }
-        
-        if len(flags) > 0 {
-            var vverbose_flag *Flag = GetFlag("vverbose", flags)
-
-            if vverbose_flag != nil {
-                vverbose = true
-            }
-        }
-
-        if limit_flag != nil {
-            i_value, err := strconv.ParseInt(GetFlagValue(limit_flag), 10, 0)
-            if err != nil {
-                fmt.Println("Limit value must be an integer.")
-                fmt.Printf("%v\n", err)
-                os.Exit(1)
-            }
-
-            limit = int(i_value)
-        }
-    }
-    
     var label string = args[2]
     var search_term string = args[3]
+    
+    var verbose bool = getExistsFlagValue("verbose", &flags)
+    var vverbose bool = getExistsFlagValue("vverbose", &flags)
+    var limit int = getStoreIntFlagValue("limit", &flags)
+    
     switch strings.ToLower(label) {
         case "title":
             searchTitle(search_term, verbose, vverbose, limit)
@@ -68,41 +40,14 @@ func runFilter(args []string, flags []Flag) {
     if len(args) != 4 {
         fmt.Println("Please provide a filter and value.")
     }
-
-    var verbose bool
-    var vverbose bool
-    var limit int
-    
-    if len(flags) > 0 {
-        var verbose_flag *Flag = GetFlag("verbose", flags)
-        var limit_flag *Flag = GetFlag("limit", flags)
-
-        if verbose_flag != nil {
-            verbose = true
-        }
-        
-        if len(flags) > 0 {
-            var vverbose_flag *Flag = GetFlag("vverbose", flags)
-
-            if vverbose_flag != nil {
-                vverbose = true
-            }
-        }
-
-        if limit_flag != nil {
-            i_value, err := strconv.ParseInt(GetFlagValue(limit_flag), 10, 0)
-            if err != nil {
-                fmt.Println("Limit value must be an integer.")
-                fmt.Printf("%v\n", err)
-                os.Exit(1)
-            }
-
-            limit = int(i_value)
-        }
-    }
     
     var label string = args[2]
     var value string = args[3]
+    
+    var verbose bool = getExistsFlagValue("verbose", &flags)
+    var vverbose bool = getExistsFlagValue("vverbose", &flags)
+    var limit int = getStoreIntFlagValue("limit", &flags)
+
     value_as_bool, err := strconv.ParseBool(value)
     if err != nil {
         fmt.Println("Value must be either true or false.")
@@ -120,14 +65,15 @@ func runFilter(args []string, flags []Flag) {
 func filterOwned(value, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
-
-    for i := 0; i < until; i++ {
+    var count int = 0
+    for i := 0; i < len(books); i++ {
         if books[i].Owned == value {
             printBook(&books[i], false, verbose, vverbose)
+            count++
+        }
+
+        if limit != 0 && count == limit {
+            break
         }
     }
 }
@@ -135,15 +81,18 @@ func filterOwned(value, verbose bool, vverbose bool, limit int) {
 func searchReadBy(search_term string, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
+    var count int = 0
 
-    for i := 0; i < until; i++ {
+Loops:
+    for i := 0; i < len(books); i++ {
         for j := 0; j < len(books[i].ReadBy); j++ {
             if containsCaseInsensitive(books[i].ReadBy[j], search_term) {
                 printBook(&books[i], false, verbose, vverbose)
+                count++
+
+                if limit != 0 && count == limit {
+                    break Loops
+                }
             }
         }
     }
@@ -152,14 +101,15 @@ func searchReadBy(search_term string, verbose bool, vverbose bool, limit int) {
 func searchTitle(search_term string, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
-
-    for i := 0; i < until; i++ {
+    var count int = 0
+    for i := 0; i < len(books); i++ {
         if containsCaseInsensitive(books[i].Title, search_term) {
             printBook(&books[i], false, verbose, vverbose)
+            count++
+        }
+
+        if limit != 0 && count == limit {
+            break
         }
     }
 }
@@ -167,14 +117,15 @@ func searchTitle(search_term string, verbose bool, vverbose bool, limit int) {
 func searchSeries(search_term string, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
-
-    for i := 0; i < until; i++ {
+    var count int = 0
+    for i := 0; i < len(books); i++ {
         if containsCaseInsensitive(books[i].Series, search_term) {
             printBook(&books[i], false, verbose, vverbose)
+            count++
+        }
+
+        if limit != 0 && count == limit {
+            break
         }
     }
 }
@@ -182,14 +133,15 @@ func searchSeries(search_term string, verbose bool, vverbose bool, limit int) {
 func searchAuthor(search_term string, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
-
-    for i := 0; i < until; i++ {
+    var count int = 0
+    for i := 0; i < len(books); i++ {
         if containsCaseInsensitive(books[i].Author, search_term) {
-            printBook(&books[i], false, verbose, vverbose)            
+            printBook(&books[i], false, verbose, vverbose)
+            count++
+        }
+
+        if limit != 0 && count == limit {
+            break
         }
     }
 }
@@ -197,14 +149,15 @@ func searchAuthor(search_term string, verbose bool, vverbose bool, limit int) {
 func searchRecommendedBy(search_term string, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
-
-    for i := 0; i < until; i++ {
+    var count int = 0
+    for i := 0; i < len(books); i++ {
         if containsCaseInsensitive(books[i].RecommendedBy, search_term) {
             printBook(&books[i], false, verbose, vverbose)
+            count++
+        }
+
+        if limit != 0 && count == limit {
+            break
         }
     }
 }
@@ -212,14 +165,15 @@ func searchRecommendedBy(search_term string, verbose bool, vverbose bool, limit 
 func searchGenre(search_term string, verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
     
-    var until int = len(books)
-    if limit != 0 {
-        until = limit
-    }
-
-    for i := 0; i < until; i++ {
+    var count int = 0
+    for i := 0; i < len(books); i++ {
         if containsCaseInsensitive(books[i].Genre, search_term) {
             printBook(&books[i], false, verbose, vverbose)
+            count++
+        }
+
+        if limit != 0 && count == limit {
+            break
         }
     }
 }
