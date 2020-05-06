@@ -29,21 +29,6 @@ func readUsers() []User {
     return users
 }
 
-func runUpdateUser() {
-    username := getInput("Username: ")
-    field := getInput("Field: ")
-    value := getInput("New Value: ")
-    
-    switch strings.ToLower(field) {
-        case "username":
-            updateUserUsername(username, value)
-        case "githubuser":
-            updateUserGitHubUser(username, value)
-        default:
-            fmt.Println("Options are username and githubuser.")
-    }
-}
-
 func printUser(user *User, verbose bool) {
     colorPrintField("Username", (*user).Username)
 
@@ -53,6 +38,18 @@ func printUser(user *User, verbose bool) {
     }
     
     fmt.Println("-------------------------------------------------------------")
+}
+
+func getUserIndex(username string) int {
+    var users []User = readUsers()
+
+    for i := 0; i < len(users); i++ {
+        if users[i].Username == username {
+            return i
+        }
+    }
+
+    return -1
 }
 
 func listUsers(verbose bool, limit int) {
@@ -73,17 +70,6 @@ func listUsers(verbose bool, limit int) {
     }
 }
 
-func getUserIndex(username string) int {
-    var users []User = readUsers()
-
-    for i := 0; i < len(users); i++ {
-        if users[i].Username == username {
-            return i
-        }
-    }
-
-    return -1
-}
 
 func writeUsers(users *[]User) {
     gitPullOrigin(true)
@@ -167,6 +153,21 @@ func updateUserUsername(username, new_username string) {
     }
 
     writeBooks(&books)
+}
+
+func runUpdateUser() {
+    username := getInput("Username: ")
+    field := getInput("Field: ")
+    value := getInput("New Value: ")
+    
+    switch strings.ToLower(field) {
+        case "username":
+            updateUserUsername(username, value)
+        case "githubuser":
+            updateUserGitHubUser(username, value)
+        default:
+            fmt.Println("Options are username and githubuser.")
+    }
 }
 
 func deleteUser(username string) {

@@ -58,6 +58,7 @@ func runList(args []string, flags []Flag) {
     var list_type string = args[2]
 
     var verbose bool
+    var vverbose bool
     var limit int
     
     if len(flags) > 0 {
@@ -66,6 +67,14 @@ func runList(args []string, flags []Flag) {
 
         if verbose_flag != nil {
             verbose = true
+        }
+        
+        if len(flags) > 0 {
+            var vverbose_flag *Flag = GetFlag("vverbose", flags)
+
+            if vverbose_flag != nil {
+                vverbose = true
+            }
         }
 
         if limit_flag != nil {
@@ -82,9 +91,9 @@ func runList(args []string, flags []Flag) {
     
     switch strings.ToLower(list_type) {
         case "books":
-            listBooks(verbose, limit)
+            listBooks(verbose, vverbose, limit)
         case "readinglists":
-            listReadingLists(verbose, limit)
+            listReadingLists(verbose, vverbose, limit)
         case "users":
             listUsers(verbose, limit)
         default:
@@ -104,6 +113,15 @@ func runReadingList(args []string, flags []Flag) {
 
         if verbose_flag != nil {
             verbose = true
+        }
+    }
+    
+    var vverbose bool
+    if len(flags) > 0 {
+        var vverbose_flag *Flag = GetFlag("vverbose", flags)
+
+        if vverbose_flag != nil {
+            vverbose = true
         }
     }
 
@@ -128,7 +146,7 @@ func runReadingList(args []string, flags []Flag) {
 
             if reading_list_index != -1 {
                 var readinglists []ReadingList = readReadingLists()
-                printReadingList(&readinglists[reading_list_index], verbose) 
+                printReadingList(&readinglists[reading_list_index], verbose, vverbose) 
             } else {
                 fmt.Printf("No readinglist with title: \"%s\".\n", value)
             }
@@ -203,68 +221,13 @@ func main() {
                 fmt.Println("Please provide a type to delete and a value.")
             }
         case "filter":
-            if len(os.Args) == 5 {
-                value, err := strconv.ParseBool(os.Args[3])
-                if err != nil {
-                    fmt.Println("Value must be either true or false.")
-                }
-                
-                if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
-                    runFilter(os.Args[2], value, true)
-                } else {
-                    runFilter(os.Args[2], value, false)
-                }
-            } else if len(os.Args) == 4 {
-                value, err := strconv.ParseBool(os.Args[3])
-                if err != nil {
-                    fmt.Println("Value must be either true or false.")
-                }
-                
-                runFilter(os.Args[2], value, false)
-            } else {
-                fmt.Println("Please provide a filter and value.")
-            }
+            runFilter(args, flags)
         case "list":
             runList(args, flags)
-            // if len(os.Args) == 3 {
-            //     runList(os.Args[2], false)
-            // } else if len(os.Args) == 4 {
-            //     if os.Args[3] == "--verbose" || os.Args[3] == "-v" {
-            //         runList(os.Args[2], true)
-            //     }
-            // } else {
-            //     fmt.Println("Please provide a type to list.")
-            // }
         case "readinglist":
             runReadingList(args, flags)
-            // if len(os.Args) == 5 {
-            //     var readinglists []ReadingList = readReadingLists()
-
-            //     var reading_list_index = getReadingListIndex(os.Args[3])
-            //     if reading_list_index != -1 {
-            //         if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
-            //             printReadingList(&readinglists[reading_list_index], true)
-            //         }
-            //     } else {
-            //         fmt.Printf("No readinglist with title: \"%s\".\n", os.Args[3])
-            //     }
-            // } else if len(os.Args) == 4 {
-            //     runReadingList(os.Args[2], os.Args[3])
-            // } else {
-            //     fmt.Println("add/delete book or member. print readinglist.")
-            // }
         case "search":
-            if len(os.Args) == 5 {
-                if os.Args[4] == "--verbose" || os.Args[4] == "-v" {
-                    runSearch(os.Args[2], os.Args[3], true)
-                } else {
-                    runSearch(os.Args[2], os.Args[3], false)
-                }
-            } else if len(os.Args) == 4 {
-                runSearch(os.Args[2], os.Args[3], false)
-            } else {
-                fmt.Println("Please provide a search and value.")
-            }
+            runSearch(args, flags)
         case "update":
             if len(os.Args) != 3 {
                 fmt.Println("Please provide a type to update.") // readinglist, "main", title, "main2"

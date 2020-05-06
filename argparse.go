@@ -1,9 +1,5 @@
 package main
 
-import (
-    "strings"
-)
-
 type Flag struct {
     Action string
     Name   string
@@ -26,16 +22,17 @@ func constructFlag(name, action, short, long, value string) Flag {
 
 func getValidFlags() []Flag {
     var verbose Flag = constructFlag("verbose", "exists", "-v", "--verbose", "")
+    var vverbose Flag = constructFlag("vverbose", "exists", "-vv", "--vverbose", "")
     var limit Flag = constructFlag("limit", "store", "-l", "--limit", "")
 
-    var flags []Flag = []Flag{verbose, limit}
+    var flags []Flag = []Flag{limit, verbose, vverbose}
 
     return flags 
 }
 
 func GetFlag(flag_name string, flag_list []Flag) *Flag {
     for i := 0; i < len(flag_list); i++ {
-        if strings.ToLower(flag_name) == strings.ToLower(flag_list[i].Name) {
+        if compareStringsCaseInsensitive(flag_name, flag_list[i].Name) {
             return &flag_list[i]
         }
     }

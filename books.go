@@ -40,7 +40,7 @@ func getBookIndex(book_title string) int {
     var books []Book = readBooks()
 
     for i := 0; i < len(books); i++ {
-        if strings.ToLower(books[i].Title) == strings.ToLower(book_title) {
+        if compareStringsCaseInsensitive(books[i].Title, book_title) {
             return i
         }
     }
@@ -52,7 +52,7 @@ func printCantFindBook(book_title string) {
     fmt.Printf("Can't find book with title \"%s\".\n", book_title)
 }
  
-func printBook(book *Book, indent bool, verbose bool) {
+func printBook(book *Book, indent bool, verbose bool, vverbose bool) {
     var prefix string
 
     if indent {
@@ -61,20 +61,23 @@ func printBook(book *Book, indent bool, verbose bool) {
     
     colorPrintField(fmt.Sprintf("%sTitle", prefix), (*book).Title)
 
-    if verbose {
+    if verbose || vverbose {
         colorPrintField(fmt.Sprintf("%sSeries", prefix), (*book).Series)
         colorPrintField(fmt.Sprintf("%sAuthor", prefix), (*book).Author)
+        colorPrintField(fmt.Sprintf("%sGenre", prefix), (*book).Genre)
+    }
+
+    if vverbose {
         colorPrintField(fmt.Sprintf("%sRecommended By", prefix), (*book).RecommendedBy)
         colorPrintField(fmt.Sprintf("%sReadBy", prefix), strings.Join((*book).ReadBy[:], ", "))
         colorPrintField(fmt.Sprintf("%sOwned", prefix), strconv.FormatBool((*book).Owned))
-        colorPrintField(fmt.Sprintf("%sGenre", prefix), (*book).Genre)
         colorPrintField(fmt.Sprintf("%sEntryOwner", prefix), (*book).EntryOwner)
     }
     
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listBooks(verbose bool, limit int) {
+func listBooks(verbose bool, vverbose bool, limit int) {
     var books []Book = readBooks()
 
     var until int = len(books)
@@ -83,7 +86,7 @@ func listBooks(verbose bool, limit int) {
     }
 
     for i := 0; i < until; i++ {
-        printBook(&books[i], false, verbose)
+        printBook(&books[i], false, verbose, vverbose)
     }
 }
 
@@ -115,7 +118,7 @@ func appendBook(book *Book) {
 func addBookReadBy(read_by *[]string) {
     var cont bool = true
     for cont {
-        person := getInput("UserName: ")
+        person := getInput("Person: ")
         (*read_by) = append((*read_by), person)
         
         cont_prompt := getInput("Add another person? (y/n) ")
@@ -123,7 +126,34 @@ func addBookReadBy(read_by *[]string) {
 
         cont = false
         for i := 0; i < len(cont_strings); i++ {
-            if strings.ToLower(cont_prompt) == cont_strings[i] {
+            if compareStringsCaseInsensitive(cont_prompt, cont_strings[i]) {
+                cont = true
+            } 
+        }
+    }
+}
+
+func deleteBookReadBy(read_by *[]string) {
+    var cont bool = true
+    for cont {
+        person := getInput("Person: ")
+
+        for i := 0; i < len((*read_by)); i++ {
+            if compareStringsCaseInsensitive(person, (*read_by)[i]) {
+                (*read_by) = append((*read_by)[:i], (*read_by)[i+1:]...)
+            }
+        }
+
+        if len((*read_by)) == 0 {
+            return
+        }
+        
+        cont_prompt := getInput("Delete another person? (y/n) ")
+        var cont_strings []string = []string{"y", "yes", ""}
+
+        cont = false
+        for i := 0; i < len(cont_strings); i++ {
+            if compareStringsCaseInsensitive(cont_prompt, cont_strings[i]) {
                 cont = true
             } 
         }
@@ -148,9 +178,9 @@ func addBook() {
     var read_by []string
     addBookReadBy(&read_by)
     
-    owned := getInput("Owned")
+    owned := getInput("Owned (t/f): ")
     owned_bool := false
-    if strings.ToLower(owned) == "true" {
+    if strings.ToLower(owned) == "true" || strings.ToLower(owned) == "t" {
         owned_bool = true    
     }
     
@@ -192,43 +222,6 @@ func addBook() {
     appendBook(new_book)
 }
 
-func runUpdateBook() {
-    book_title := getInput("Book Title: ")
-    field := getInput("Field: ")
-    
-    switch strings.ToLower(field) {
-        case "title":
-            value := getInput("New Value: ")
-            updateBookTitle(book_title, value)
-        case "series":
-            value := getInput("New Value: ")
-            updateBookSeries(book_title, value)
-        case "author":
-            value := getInput("New Value: ")
-            updateBookAuthor(book_title, value)
-        case "recommendedby":
-            value := getInput("New Value: ")
-            updateBookRecommendedBy(book_title, value)
-        case "readby":
-            var books []Book = readBooks()
-            var i int = getBookIndex(book_title)
-            addBookReadBy(&books[i].ReadBy)
-            writeBooks(&books)
-        case "owned":
-            value := getInput("New Value: ")
-            value_as_bool, _ := strconv.ParseBool(value)
-            updateBookOwned(book_title, value_as_bool)
-        case "genre":
-            value := getInput("New Value: ")
-            updateBookGenre(book_title, value)
-        case "entryowner":
-            value := getInput("New Value: ")
-            updateBookEntryOwner(book_title, value)
-        default:
-            fmt.Println("Options are title, series, author, recommendedby, readby, owned, genre, or entryowner.")
-    }
-}  
-
 func updateBookTitle(book_title, new_book_title string) {
     var new_book_index = getBookIndex(new_book_title)
     
@@ -251,7 +244,7 @@ func updateBookTitle(book_title, new_book_title string) {
 
     for i := 0; i < len(reading_lists); i++ {
         for j := 0; j < len(reading_lists[i].Books); j++ {
-            if strings.ToLower(reading_lists[i].Books[j]) == strings.ToLower(book_title) {
+            if compareStringsCaseInsensitive(reading_lists[i].Books[j], book_title) {
                 reading_lists[i].Books[j] = new_book_title
             }
         }
@@ -298,18 +291,6 @@ func updateBookRecommendedBy(book_title, recommended_by_value string) {
 
 }
 
-// func updateBookRead(book_title string, read_value bool) {
-//     var book_index int = getBookIndex(book_title)
-    
-//     if book_index != -1 {
-//         var books []Book = readBooks()
-//         books[book_index].Read = read_value
-//         writeBooks(&books)
-//     } else {
-//         printCantFindBook(book_title)
-//     }
-// }
-
 func updateBookOwned(book_title string, owned_value bool) {
     var book_index int = getBookIndex(book_title)
     
@@ -346,12 +327,59 @@ func updateBookEntryOwner(book_title, entry_owner_value string) {
     }
 }
 
+func runUpdateBook() {
+    book_title := getInput("Book Title: ")
+    field := getInput("Field: ")
+    
+    switch strings.ToLower(field) {
+        case "title":
+            value := getInput("New Value: ")
+            updateBookTitle(book_title, value)
+        case "series":
+            value := getInput("New Value: ")
+            updateBookSeries(book_title, value)
+        case "author":
+            value := getInput("New Value: ")
+            updateBookAuthor(book_title, value)
+        case "recommendedby":
+            value := getInput("New Value: ")
+            updateBookRecommendedBy(book_title, value)
+        case "readby":
+            add_or_delete := getInput("Add or Delete? (a/d) ")
+            var books []Book = readBooks()
+            var i int = getBookIndex(book_title)
+
+            if strings.ToLower(add_or_delete) == "Add" || strings.ToLower(add_or_delete) == "a" {
+                addBookReadBy(&books[i].ReadBy)               
+                writeBooks(&books)
+            } else if strings.ToLower(add_or_delete) == "Delete" || strings.ToLower(add_or_delete) == "d" {
+                deleteBookReadBy(&books[i].ReadBy)               
+                writeBooks(&books)
+            } else {
+                fmt.Printf("Select add, delete, a, or d.")
+            }
+        case "owned":
+            value := getInput("New Value: ")
+            value_as_bool, _ := strconv.ParseBool(value)
+            updateBookOwned(book_title, value_as_bool)
+        case "genre":
+            value := getInput("New Value: ")
+            updateBookGenre(book_title, value)
+        case "entryowner":
+            value := getInput("New Value: ")
+            updateBookEntryOwner(book_title, value)
+        default:
+            fmt.Println("Options are title, series, author, recommendedby, readby, owned, genre, or entryowner.")
+    }
+}  
+
 func deleteBook(book_title string) {
     var book_index int = getBookIndex(book_title)
     
     if book_index != -1 {
         var books []Book = readBooks()
         books = append(books[:book_index], books[book_index+1:]...)
+        
         writeBooks(&books)
     } else {
         printCantFindBook(book_title)

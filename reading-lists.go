@@ -33,7 +33,7 @@ func getReadingListIndex(reading_list_title string) int {
     var reading_lists []ReadingList = readReadingLists()
 
     for i := 0; i < len(reading_lists); i++ {
-        if strings.ToLower(reading_lists[i].Title) == strings.ToLower(reading_list_title) {
+        if compareStringsCaseInsensitive(reading_lists[i].Title, reading_list_title) { 
             return i
         }
     }
@@ -41,20 +41,7 @@ func getReadingListIndex(reading_list_title string) int {
     return -1
 }
 
-func runUpdateReadingList() {
-    reading_list_title := getInput("Reading List Title: ")
-    field := getInput("Field: ")
-    value := getInput("New Value: ")
-    
-    switch strings.ToLower(field) {
-        case "title":
-            updateReadingListTitle(reading_list_title, value)
-        default:
-            fmt.Println("Options are title.")
-    }
-}
-            
-func printReadingList(reading_list *ReadingList, verbose bool) {
+func printReadingList(reading_list *ReadingList, verbose bool, vverbose bool) {
     colorPrintField("Title", (*reading_list).Title)
     colorPrintField("Members", strings.Join((*reading_list).Members[:], ", "))
 
@@ -70,8 +57,8 @@ func printReadingList(reading_list *ReadingList, verbose bool) {
     
     for i := 0; i < len((*reading_list).Books); i++ {
         for j := 0; j < len(books); j++ {
-            if strings.ToLower(books[j].Title) == strings.ToLower((*reading_list).Books[i]) {
-                printBook(&books[j], true, verbose)
+            if compareStringsCaseInsensitive(books[j].Title, (*reading_list).Books[i]) {
+                printBook(&books[j], true, verbose, vverbose)
                 break
             }
         }
@@ -80,7 +67,7 @@ func printReadingList(reading_list *ReadingList, verbose bool) {
     fmt.Println("-------------------------------------------------------------")
 }
 
-func listReadingLists(verbose bool, limit int) {
+func listReadingLists(verbose bool, vverbose bool, limit int) {
     var reading_lists []ReadingList = readReadingLists()
 
     var until = len(reading_lists)
@@ -89,7 +76,7 @@ func listReadingLists(verbose bool, limit int) {
     }
 
     for i := 0; i < until; i++ {
-        printReadingList(&reading_lists[i], verbose)
+        printReadingList(&reading_lists[i], verbose, vverbose)
     }
 }
 
@@ -165,6 +152,19 @@ func updateReadingListTitle(reading_list_title, new_title string) {
     }
 }
 
+func runUpdateReadingList() {
+    reading_list_title := getInput("Reading List Title: ")
+    field := getInput("Field: ")
+    value := getInput("New Value: ")
+    
+    switch strings.ToLower(field) {
+        case "title":
+            updateReadingListTitle(reading_list_title, value)
+        default:
+            fmt.Println("Options are title.")
+    }
+}
+            
 func addBookToReadingList() {
     title := getInput("Reading List Title: ")
     book_title := getInput("Book Title: ")
@@ -254,7 +254,7 @@ func deleteBookFromReadingList() {
     }
 
     for i := 0; i < len(readinglists[reading_list_index].Books); i++ {
-        if strings.ToLower(readinglists[reading_list_index].Books[i]) == strings.ToLower(book_title) {
+        if compareStringsCaseInsensitive(readinglists[reading_list_index].Books[i], book_title) {
             readinglists[reading_list_index].Books = append(readinglists[reading_list_index].Books[:i], readinglists[reading_list_index].Books[i+1:]...)
             break
         }

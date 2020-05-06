@@ -1,14 +1,15 @@
 # TODO
   -- **CLI**: previous field editing (":back")
-  -- **CLI**: book_list list series "Wheel of Time"
-  -- **CLI**: print defaults (owned (true/false):)
-  -- **CLI**: more options for boolean fields (true/false/t/f/yes/no/y/n)
-  -- add deleteReadBy update function
+  -- add flags to allow fields to be added from command line without input
+    * booklist add book -t "test" -a "C.S. Lewis" -g Fantasy -rb "Cameron Yee, Jordan Yee" -o false -eo "Cameron Yee"
 
 ## WIP
-  -- change read field to readBy field ("Cameron Yee, Jordan Yee")
+  -- **CLI**: print defaults (owned (true/false):)
+  -- **CLI**: more options for boolean fields (true/false/t/f/yes/no/y/n)
 
 ## DONE
+  -- add deleteReadBy update function
+  -- change read field to readBy field ("Cameron Yee, Jordan Yee")
   -- limit search results (flag -l 10 --limit 10)
   -- GitHub pull check to make sure merge conflicts don't ruin everything
   -- clean up printing
@@ -19,6 +20,10 @@
   -- update reading list members
   -- update user reading lists
   -- update reading list books
+
+## NOPE
+  -- **CLI**: booklist list series "Wheel of Time"
+    * Can be done with search **CLI**
 -----------------------------------------------------------------
 
 ## Feature requests
