@@ -4,6 +4,7 @@ import (
     "fmt"
     "log"
     "os"
+    "strconv"
     "strings"
 
     "github.com/joho/godotenv"
@@ -46,18 +47,18 @@ func runDelete(delete_type, value string) {
     }
 }
 
-func runList(args []string, flags []Flag) {
+func runList(args []string, flags FlagList) {
     gitPullOrigin(false)
-    
+
     if len(args) != 3 {
         fmt.Println("Please provide a type to list.")
     }
     
     var list_type string = args[2]
     
-    var verbose bool = getExistsFlagValue("verbose", &flags)
-    var vverbose bool = getExistsFlagValue("vverbose", &flags)
-    var limit int = getStoreIntFlagValue("limit", &flags)
+    var verbose bool = GetBoolFlagValue("verbose", flags)
+    var vverbose bool = GetBoolFlagValue("vverbose", flags)
+    var limit int = GetIntFlagValue("limit", flags)
 
     switch strings.ToLower(list_type) {
         case "books":
@@ -71,7 +72,7 @@ func runList(args []string, flags []Flag) {
     }
 }
 
-func runReadingList(args []string, flags []Flag) {
+func runReadingList(args []string, flags FlagList) {
     if len(args) != 4 {
         fmt.Println("Please provide a type to list.")
     }
@@ -79,8 +80,8 @@ func runReadingList(args []string, flags []Flag) {
     var command string = args[2]
     var value string = args[3]
 
-    var verbose bool = getExistsFlagValue("verbose", &flags)
-    var vverbose bool = getExistsFlagValue("vverbose", &flags)
+    var verbose bool = GetBoolFlagValue("verbose", flags)
+    var vverbose bool = GetBoolFlagValue("vverbose", flags)
     
     switch strings.ToLower(command) {
         case "add":
@@ -122,27 +123,55 @@ func runUpdate(update_type string) {
     }
 }
 
-func GetCLIArgs(argslist []string) (args []string, flags []Flag) {
-    for i := 0; i < len(argslist); i++ {
-        is_valid, flag := ValidateFlag(argslist[i])
+func GetCLIArgs(argslist []string) ([]string, FlagList) {
+    var args []string
+    var validFlags FlagList = getValidFlags()
         
-        if is_valid {
-            if (flag.Action == "store") {
+    for i := 0; i < len(argslist); i++ {
+        var flagType string = GetFlagType(argslist[i], validFlags)
+
+        if flagType != "" {
+            if flagType != "bool" {
                 if i == len(argslist) - 1 {
-                    fmt.Printf("Flag \"%v\" requires a value.\n", flag.Name)
+                    fmt.Printf("Flag \"%s\" requires a value.\n", argslist[i])
+                    os.Exit(1)
                 }
-                
-                flag.Value = argslist[i+1]
+            }
+
+            if flagType == "int" {
+                for j := 0; j < len(validFlags.IntFlags); j++ {
+                    if validFlags.IntFlags[j].Flag.Short == argslist[i] ||  validFlags.IntFlags[j].Flag.Long == argslist[i] {
+                        value_to_int, err := strconv.Atoi(argslist[i+1])
+                        if err != nil {
+                            fmt.Printf("Value for %s must be an integer.", validFlags.IntFlags[j].Flag.Name)
+                        }
+                        
+                        validFlags.IntFlags[j].Value = value_to_int 
+                    }
+                }
+
+                i++
+            } else if flagType == "bool" {
+                for j := 0; j < len(validFlags.BoolFlags); j++ {
+                    if validFlags.BoolFlags[j].Flag.Short == argslist[i] ||  validFlags.BoolFlags[j].Flag.Long == argslist[i] {
+                        validFlags.BoolFlags[j].Value = true
+                    }
+                }
+            } else if (flagType == "string") {
+                for j := 0; j < len(validFlags.StringFlags); j++ {
+                    if validFlags.StringFlags[j].Flag.Short == argslist[i] ||  validFlags.StringFlags[j].Flag.Long == argslist[i] {
+                        validFlags.StringFlags[j].Value = argslist[i+1]
+                    }
+                }
+
                 i++
             }
-            
-            flags = append(flags, flag)
         } else {
             args = append(args, argslist[i])
         } 
     }
 
-    return
+    return args, validFlags
 }
 
 func init() {

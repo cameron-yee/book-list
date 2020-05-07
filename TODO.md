@@ -2,12 +2,16 @@
   -- **CLI**: previous field editing (":back")
   -- add flags to allow fields to be added from command line without input
     * booklist add book -t "test" -a "C.S. Lewis" -g Fantasy -rb "Cameron Yee, Jordan Yee" -o false -eo "Cameron Yee"
+  -- add flag to sort alphabetically
+  -- add print range
 
 ## WIP
   -- **CLI**: print defaults (owned (true/false):)
   -- **CLI**: more options for boolean fields (true/false/t/f/yes/no/y/n)
 
 ## DONE
+  -- add flag for true/false (booklist search readby "Cameron Yee" -f --false
+  -- add default messages for no search results found
   -- add deleteReadBy update function
   -- change read field to readBy field ("Cameron Yee, Jordan Yee")
   -- limit search results (flag -l 10 --limit 10)
