@@ -12,6 +12,7 @@ import (
 
 func help() {
     fmt.Println("Commands:")
+    fmt.Println("\tbooklist [command] <flags> <options>")
     fmt.Println("\tadd: Add a book, readinglist, or user. Additionally, add a member to a reading list.")
     fmt.Println("\tdelete: Delete a book, readinglist, or user. Additionally, delete a member from a reading list.")
     fmt.Println("\tfilter: Filter based on bool property. Ex. ./main.go filter owned true")
@@ -19,6 +20,7 @@ func help() {
     fmt.Println("\tlist: List books, readinglists, or users.")
     fmt.Println("\tsearch: Search based on string property. Ex. ./main.go search title Narnia")
     fmt.Println("\tupdate: Update a type by providing a type, primary key, field, and the new value for the field.")
+    fmt.Println("\treadinglist [add, delete, print] <-v, -vv, -l> <book, member>")
 }
 
 func runAdd(add_type string) {
@@ -58,7 +60,7 @@ func runList(args []string, flags FlagList) {
     
     var verbose bool = GetBoolFlagValue("verbose", flags)
     var vverbose bool = GetBoolFlagValue("vverbose", flags)
-    var limit int = GetIntFlagValue("limit", flags)
+   var limit int = GetIntFlagValue("limit", flags)
 
     switch strings.ToLower(list_type) {
         case "books":
@@ -123,6 +125,13 @@ func runUpdate(update_type string) {
     }
 }
 
+func checkForFlagValue(argslist *[]string, i int) {
+    if i == len(*argslist) - 1 {
+        fmt.Printf("Flag \"%s\" requires a value.\n", (*argslist)[i])
+        os.Exit(1)
+    }
+}
+
 func GetCLIArgs(argslist []string) ([]string, FlagList) {
     var args []string
     var validFlags FlagList = getValidFlags()
@@ -130,17 +139,22 @@ func GetCLIArgs(argslist []string) ([]string, FlagList) {
     for i := 0; i < len(argslist); i++ {
         var flagType string = GetFlagType(argslist[i], validFlags)
 
-        if flagType != "" {
-            if flagType != "bool" {
-                if i == len(argslist) - 1 {
-                    fmt.Printf("Flag \"%s\" requires a value.\n", argslist[i])
-                    os.Exit(1)
+        switch (flagType) {
+            case "":
+                args = append(args, argslist[i])
+            case "bool":
+                for j := 0; j < len(validFlags.BoolFlags); j++ {
+                    if validFlags.BoolFlags[j].Flag.Short == argslist[i] ||
+                       validFlags.BoolFlags[j].Flag.Long == argslist[i] {
+                        validFlags.BoolFlags[j].Value = true
+                    }
                 }
-            }
-
-            if flagType == "int" {
+            case "int":
+                checkForFlagValue(&argslist, i)
+                
                 for j := 0; j < len(validFlags.IntFlags); j++ {
-                    if validFlags.IntFlags[j].Flag.Short == argslist[i] ||  validFlags.IntFlags[j].Flag.Long == argslist[i] {
+                    if validFlags.IntFlags[j].Flag.Short == argslist[i] ||
+                       validFlags.IntFlags[j].Flag.Long == argslist[i] {
                         value_to_int, err := strconv.Atoi(argslist[i+1])
                         if err != nil {
                             fmt.Printf("Value for %s must be an integer.", validFlags.IntFlags[j].Flag.Name)
@@ -151,24 +165,18 @@ func GetCLIArgs(argslist []string) ([]string, FlagList) {
                 }
 
                 i++
-            } else if flagType == "bool" {
-                for j := 0; j < len(validFlags.BoolFlags); j++ {
-                    if validFlags.BoolFlags[j].Flag.Short == argslist[i] ||  validFlags.BoolFlags[j].Flag.Long == argslist[i] {
-                        validFlags.BoolFlags[j].Value = true
-                    }
-                }
-            } else if (flagType == "string") {
+            case "string":
+                checkForFlagValue(&argslist, i)
+                
                 for j := 0; j < len(validFlags.StringFlags); j++ {
-                    if validFlags.StringFlags[j].Flag.Short == argslist[i] ||  validFlags.StringFlags[j].Flag.Long == argslist[i] {
+                    if validFlags.StringFlags[j].Flag.Short == argslist[i] ||
+                       validFlags.StringFlags[j].Flag.Long == argslist[i] {
                         validFlags.StringFlags[j].Value = argslist[i+1]
                     }
                 }
 
                 i++
-            }
-        } else {
-            args = append(args, argslist[i])
-        } 
+        }
     }
 
     return args, validFlags
