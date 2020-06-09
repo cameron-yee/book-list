@@ -231,14 +231,14 @@ func updateBookTitle(book_title, new_book_title string) {
     }
     
     var book_index int = getBookIndex(book_title)
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].Title = new_book_title
-        writeBooks(&books)
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
         return
     }
+    
+    var books []Book = readBooks()
+    books[book_index].Title = new_book_title
+    writeBooks(&books)
     
     var reading_lists []ReadingList = readReadingLists()
 
@@ -255,76 +255,82 @@ func updateBookTitle(book_title, new_book_title string) {
 
 func updateBookSeries(book_title, series_value string) {
     var book_index int = getBookIndex(book_title)
-    
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].Series = series_value
-        writeBooks(&books)
-    } else {
+
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
+    
+    var books []Book = readBooks()
+    books[book_index].Series = series_value
+    writeBooks(&books)
+
 }
 
 func updateBookAuthor(book_title, author_value string) {
     var books []Book = readBooks()
     
     var book_index int = getBookIndex(book_title)
-    if book_index != -1 {
-        books[book_index].Author = author_value
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
-    
+
+    books[book_index].Author = author_value
+   
     writeBooks(&books)
 }
 
 func updateBookRecommendedBy(book_title, recommended_by_value string) {
     var book_index int = getBookIndex(book_title)
     
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].RecommendedBy = recommended_by_value
-        writeBooks(&books)
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
-
+    
+    var books []Book = readBooks()
+    books[book_index].RecommendedBy = recommended_by_value
+    writeBooks(&books)
 }
 
 func updateBookOwned(book_title string, owned_value bool) {
     var book_index int = getBookIndex(book_title)
     
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].Owned = owned_value
-        writeBooks(&books)
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
+    
+    var books []Book = readBooks()
+    books[book_index].Owned = owned_value
+    writeBooks(&books)
 }
 
 func updateBookGenre(book_title, genre_value string) {
     var book_index int = getBookIndex(book_title)
     
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].Genre = genre_value
-        writeBooks(&books)
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
+    
+    var books []Book = readBooks()
+    books[book_index].Genre = genre_value
+    writeBooks(&books)
 }
 
 func updateBookEntryOwner(book_title, entry_owner_value string) {
     var book_index int = getBookIndex(book_title)
     
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books[book_index].EntryOwner = entry_owner_value
-        writeBooks(&books)
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
+    
+    var books []Book = readBooks()
+    books[book_index].EntryOwner = entry_owner_value
+    writeBooks(&books)
 }
 
 func runUpdateBook() {
@@ -376,12 +382,13 @@ func runUpdateBook() {
 func deleteBook(book_title string) {
     var book_index int = getBookIndex(book_title)
     
-    if book_index != -1 {
-        var books []Book = readBooks()
-        books = append(books[:book_index], books[book_index+1:]...)
-        
-        writeBooks(&books)
-    } else {
+    if book_index == -1 {
         printCantFindBook(book_title)
+        return
     }
+    
+    var books []Book = readBooks()
+    books = append(books[:book_index], books[book_index+1:]...)
+    
+    writeBooks(&books)
 }

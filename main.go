@@ -60,7 +60,7 @@ func runList(args []string, flags FlagList) {
     
     var verbose bool = GetBoolFlagValue("verbose", flags)
     var vverbose bool = GetBoolFlagValue("vverbose", flags)
-   var limit int = GetIntFlagValue("limit", flags)
+    var limit int = GetIntFlagValue("limit", flags)
 
     switch strings.ToLower(list_type) {
         case "books":
@@ -103,10 +103,11 @@ func runReadingList(args []string, flags FlagList) {
 
             if reading_list_index != -1 {
                 var readinglists []ReadingList = readReadingLists()
-                printReadingList(&readinglists[reading_list_index], verbose, vverbose) 
-            } else {
-                fmt.Printf("No readinglist with title: \"%s\".\n", value)
+                printReadingList(&readinglists[reading_list_index], verbose, vverbose)
+                return
             }
+            
+            fmt.Printf("No readinglist with title: \"%s\".\n", value)
         default:
             fmt.Println("Options are add, delete, or print.")
     }
@@ -202,15 +203,17 @@ func main() {
         case "add":
             if len(os.Args) == 3 {
                 runAdd(os.Args[2])
-            } else {
-                fmt.Println("Please provide a type to add.")
+                return
             }
+            
+            fmt.Println("Please provide a type to add.")
         case "delete":
             if len(os.Args) == 4 {
                 runDelete(os.Args[2], os.Args[3])
-            } else {
-                fmt.Println("Please provide a type to delete and a value.")
+                return
             }
+            
+            fmt.Println("Please provide a type to delete and a value.")
         case "filter":
             runFilter(args, flags)
         case "list":
@@ -222,9 +225,10 @@ func main() {
         case "update":
             if len(os.Args) != 3 {
                 fmt.Println("Please provide a type to update.") // readinglist, "main", title, "main2"
-            } else {
-                runUpdate(os.Args[2]) // title, field, field_value
+                return
             }
+            
+            runUpdate(os.Args[2]) // title, field, field_value
         default:
             help()
     }

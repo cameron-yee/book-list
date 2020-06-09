@@ -49,11 +49,12 @@ func printReadingList(reading_list *ReadingList, verbose bool, vverbose bool) {
 
     colorPrintField("Books", "")
     if len((*reading_list).Books) == 0 {
-        fmt.Println("NO BOOKS IN READING LIST.") 
-    } else {
-        fmt.Println("-------------------------------------------------------------")
-        fmt.Println("-------------------------------------------------------------")
+        fmt.Println("NO BOOKS IN READING LIST.")
+        return
     }
+    
+    fmt.Println("-------------------------------------------------------------")
+    fmt.Println("-------------------------------------------------------------")
     
     for i := 0; i < len((*reading_list).Books); i++ {
         for j := 0; j < len(books); j++ {
@@ -190,12 +191,13 @@ func addBookToReadingList() {
         }    
     }
 
-    if book_already_in_list == false {
-        readinglists[readinglist_index].Books = append(readinglists[readinglist_index].Books, book_title)
-        writeReadingLists(&readinglists)
-    } else {
+    if book_already_in_list != false {
         fmt.Printf("Book with title: \"%s\" already exists in reading list \"%s\".\n", book_title, title)
+        return
     }
+    
+    readinglists[readinglist_index].Books = append(readinglists[readinglist_index].Books, book_title)
+    writeReadingLists(&readinglists)
 }
 
 func addMemberToReadingList() {
@@ -224,15 +226,16 @@ func addMemberToReadingList() {
         }    
     }
 
-    if user_already_in_list == false {
-        readinglists[readinglist_index].Members = append(readinglists[readinglist_index].Members, users[user_index].Username)
-        users[user_index].ReadingLists = append(users[user_index].ReadingLists, title)
-
-        writeReadingLists(&readinglists)
-        writeUsers(&users)
-    } else {
+    if user_already_in_list != false {
         fmt.Printf("User with title: \"%s\" already exists in reading list \"%s\".\n", new_member, title)
+        return
     }
+    
+    readinglists[readinglist_index].Members = append(readinglists[readinglist_index].Members, users[user_index].Username)
+    users[user_index].ReadingLists = append(users[user_index].ReadingLists, title)
+
+    writeReadingLists(&readinglists)
+    writeUsers(&users)
 }
 
 func deleteBookFromReadingList() {

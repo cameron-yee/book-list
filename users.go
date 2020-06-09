@@ -117,14 +117,14 @@ func addUser() {
 
 func updateUserGitHubUser(username, new_githubuser string) {
     var user_index int = getUserIndex(username)
-    if user_index != -1 {
-        var users []User = readUsers()
-        users[user_index].GitHubUser = new_githubuser
-        writeUsers(&users)
-    } else {
+    if user_index == -1 {
         fmt.Printf("User doesn't exist with username: \"%s\".\n", username)
-        return
+        return        
     }
+    
+    var users []User = readUsers()
+    users[user_index].GitHubUser = new_githubuser
+    writeUsers(&users)
 }
 
 func updateUserUsername(username, new_username string) {
@@ -135,15 +135,15 @@ func updateUserUsername(username, new_username string) {
     }
     
     var user_index int = getUserIndex(username)
-    if user_index != -1 {
-        var users []User = readUsers()
-        users[user_index].Username = new_username
-        writeUsers(&users)
-    } else {
+    if user_index == -1 {
         fmt.Printf("User doesn't exist with username: \"%s\".\n", username)
         return
     }
     
+    var users []User = readUsers()
+    users[user_index].Username = new_username
+    writeUsers(&users)
+
     var books []Book = readBooks()
 
     for i := 0; i < len(books); i++ {
@@ -173,11 +173,12 @@ func runUpdateUser() {
 func deleteUser(username string) {
     var user_index int = getUserIndex(username)
     
-    if user_index != -1 {
-        var users []User = readUsers()
-        users = append(users[:user_index], users[user_index+1:]...)
-        writeUsers(&users)
-    } else {
+    if user_index == -1 {
         fmt.Printf("User doesn't exist with username: \"%s\".\n", username)
+        return
     }
+    
+    var users []User = readUsers()
+    users = append(users[:user_index], users[user_index+1:]...)
+    writeUsers(&users)
 }
