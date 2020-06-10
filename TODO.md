@@ -1,4 +1,7 @@
 # TODO
+  -- help: add help flag to other commands besides list
+  -- finish changing main run commands to take (args, flags)
+  
   -- **CLI**: previous field editing (":back")
   -- add flags to allow fields to be added from command line without input
     * booklist add book -t "test" -a "C.S. Lewis" -g Fantasy -rb "Cameron Yee, Jordan Yee" -o false -eo "Cameron Yee"

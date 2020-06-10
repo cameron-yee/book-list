@@ -11,15 +11,16 @@ import (
 )
 
 func help() {
-    fmt.Println("Commands:")
+    fmt.Println("Usage:")
     fmt.Println("\tbooklist [command] <flags> <options>")
-    fmt.Println("\tadd: Add a book, readinglist, or user. Additionally, add a member to a reading list.")
-    fmt.Println("\tdelete: Delete a book, readinglist, or user. Additionally, delete a member from a reading list.")
-    fmt.Println("\tfilter: Filter based on bool property. Ex. ./main.go filter owned true")
-    fmt.Println("\thelp: Print list of commands.")
-    fmt.Println("\tlist: List books, readinglists, or users.")
-    fmt.Println("\tsearch: Search based on string property. Ex. ./main.go search title Narnia")
-    fmt.Println("\tupdate: Update a type by providing a type, primary key, field, and the new value for the field.")
+    fmt.Println("Commands:")
+    fmt.Println("\tadd [book, readinglist, user]")
+    fmt.Println("\tdelete [book, readinglist, user]")
+    fmt.Println("\tfilter [owned]")
+    fmt.Println("\thelp")
+    fmt.Println("\tlist [books, readinglists, users]")
+    fmt.Println("\tsearch [title, series, author, recommendedby, genre, readby] <search-value>")
+    fmt.Println("\tupdate [book, readinglist, user]")
     fmt.Println("\treadinglist [add, delete, print] <-v, -vv, -l> <book, member>")
 }
 
@@ -32,7 +33,7 @@ func runAdd(add_type string) {
         case "user":
             addUser()
         default:
-            fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(add_type))
+            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.\n", strings.ToLower(add_type))
     }
 }
 
@@ -45,19 +46,29 @@ func runDelete(delete_type, value string) {
         case "user":
             deleteUser(value)
         default:
-            fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(delete_type))
+            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.\n", strings.ToLower(delete_type))
     }
 }
 
 func runList(args []string, flags FlagList) {
     gitPullOrigin(false)
 
+    var help bool = GetBoolFlagValue("help", flags)
+    
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tList values for saved books, readinglists, or users.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist list <-h> [books, readinglists, users]")
+        return
+    }
+
     if len(args) != 3 {
         fmt.Println("Please provide a type to list.")
     }
     
     var list_type string = args[2]
-    
+
     var verbose bool = GetBoolFlagValue("verbose", flags)
     var vverbose bool = GetBoolFlagValue("vverbose", flags)
     var limit int = GetIntFlagValue("limit", flags)
@@ -70,7 +81,7 @@ func runList(args []string, flags FlagList) {
         case "users":
             listUsers(verbose, limit)
         default:
-            fmt.Printf("Command \"%s\" not found.\n", strings.ToLower(list_type))
+            fmt.Printf("Command \"%s\" not found. Options are books, readinglists, or users.\n", strings.ToLower(list_type))
     }
 }
 
@@ -122,7 +133,7 @@ func runUpdate(update_type string) {
         case "user":
             runUpdateUser()
         default:
-            fmt.Println("Options are book, readinglist, or user.")
+            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.", strings.ToLower(update_type))
     }
 }
 
