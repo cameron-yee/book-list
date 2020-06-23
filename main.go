@@ -24,8 +24,23 @@ func help() {
     fmt.Println("\treadinglist [add, delete, print] <-v, -vv, -l> <book, member>")
 }
 
-func runAdd(add_type string) {
-    switch strings.ToLower(add_type) {
+func runAdd(args []string, flags FlagList) {
+    var help bool = GetBoolFlagValue("help", flags)
+    
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tAdd book, readinglist, user.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist add <-h> [book, readinglist, user]")
+        return
+    }
+
+    if len(args) != 3 {
+        fmt.Println("Please provide a type to add.")
+        return
+    }
+    
+    switch strings.ToLower(args[2]) {
         case "book":
             addBook()
         case "readinglist":
@@ -33,20 +48,37 @@ func runAdd(add_type string) {
         case "user":
             addUser()
         default:
-            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.\n", strings.ToLower(add_type))
+            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.\n", strings.ToLower(args[2]))
     }
 }
 
-func runDelete(delete_type, value string) {
-    switch strings.ToLower(delete_type) {
+// func runDelete(delete_type, value string) {
+func runDelete(args []string, flags FlagList) {
+    var help bool = GetBoolFlagValue("help", flags)
+    
+
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tDelete book, readinglist, user.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist delete <-h> [book, readinglist, user] [book_title, readinglist_title, username]")
+        return
+    }
+    
+    if len(args) != 4 {
+        fmt.Println("Please provide a type to delete and a value.")
+        return
+    }
+    
+    switch strings.ToLower(args[2]) {
         case "book":
-            deleteBook(value)
+            deleteBook(args[3])
         case "readinglist":
-            deleteReadingList(value)
+            deleteReadingList(args[3])
         case "user":
-            deleteUser(value)
+            deleteUser(args[3])
         default:
-            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.\n", strings.ToLower(delete_type))
+            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.\n", strings.ToLower(args[2]))
     }
 }
 
@@ -65,6 +97,7 @@ func runList(args []string, flags FlagList) {
 
     if len(args) != 3 {
         fmt.Println("Please provide a type to list.")
+        return
     }
     
     var list_type string = args[2]
@@ -86,8 +119,19 @@ func runList(args []string, flags FlagList) {
 }
 
 func runReadingList(args []string, flags FlagList) {
+    var help bool = GetBoolFlagValue("help", flags)
+    
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tList or edit readinglists.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist readinglist <-h, -v, -vv> <add, delete, print> [book, members]")
+        return
+    }
+    
     if len(args) != 4 {
         fmt.Println("Please provide a type to list.")
+        return
     }
     
     var command string = args[2]
@@ -124,8 +168,23 @@ func runReadingList(args []string, flags FlagList) {
     }
 }
 
-func runUpdate(update_type string) {
-    switch strings.ToLower(update_type) {
+func runUpdate(args []string, flags FlagList) {
+    var help bool = GetBoolFlagValue("help", flags)
+    
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tUpdate book, readinglist, or user.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist update <-h> [book, readinglist, user]")
+        return
+    }
+    
+    if len(args) != 3 {
+        fmt.Println("Please provide a type to list. Options are book, readinglist, or user.")
+        return
+    }
+    
+    switch strings.ToLower(args[2]) {
         case "book":
             runUpdateBook()
         case "readinglist":
@@ -133,7 +192,7 @@ func runUpdate(update_type string) {
         case "user":
             runUpdateUser()
         default:
-            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.", strings.ToLower(update_type))
+            fmt.Printf("Command \"%s\" not found. Options are book, readinglist, or user.", strings.ToLower(args[2]))
     }
 }
 
@@ -212,19 +271,9 @@ func main() {
 
     switch command := os.Args[1]; command {
         case "add":
-            if len(os.Args) == 3 {
-                runAdd(os.Args[2])
-                return
-            }
-            
-            fmt.Println("Please provide a type to add.")
+            runAdd(args, flags)
         case "delete":
-            if len(os.Args) == 4 {
-                runDelete(os.Args[2], os.Args[3])
-                return
-            }
-            
-            fmt.Println("Please provide a type to delete and a value.")
+            runDelete(args, flags)
         case "filter":
             runFilter(args, flags)
         case "list":
@@ -234,12 +283,7 @@ func main() {
         case "search":
             runSearch(args, flags)
         case "update":
-            if len(os.Args) != 3 {
-                fmt.Println("Please provide a type to update.") // readinglist, "main", title, "main2"
-                return
-            }
-            
-            runUpdate(os.Args[2]) // title, field, field_value
+            runUpdate(args, flags)
         default:
             help()
     }

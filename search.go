@@ -7,8 +7,19 @@ import (
 )
 
 func runSearch(args []string, flags FlagList) {
+    var help bool = GetBoolFlagValue("help", flags)
+    
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tSearch for books based on field value.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist search <-h, -v, -vv, -l> <title, series, author, recommendedby, genre, readby> [search_value]")
+        return
+    }
+    
     if len(args) != 4 {
         fmt.Println("Please provide a field and value.")
+        return
     }
     
     var label string = args[2]
@@ -38,8 +49,19 @@ func runSearch(args []string, flags FlagList) {
 }
 
 func runFilter(args []string, flags FlagList) {
+    var help bool = GetBoolFlagValue("help", flags)
+    
+    if help {
+        fmt.Println("Description:")
+        fmt.Println("\tFilter books based on field value.")
+        fmt.Println("Usage:")
+        fmt.Println("\tbooklist filter <-h, -v, -vv, -l> <owned> [true, false]")
+        return
+    }
+    
     if len(args) != 4 {
         fmt.Println("Please provide a filter and value.")
+        return
     }
     
     var label string = args[2]
