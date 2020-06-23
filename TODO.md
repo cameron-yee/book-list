@@ -1,7 +1,4 @@
 # TODO
-  -- help: add help flag to other commands besides list
-  -- finish changing main run commands to take (args, flags)
-  
   -- **CLI**: previous field editing (":back")
   -- add flags to allow fields to be added from command line without input
     * booklist add book -t "test" -a "C.S. Lewis" -g Fantasy -rb "Cameron Yee, Jordan Yee" -o false -eo "Cameron Yee"
@@ -13,6 +10,8 @@
   -- **CLI**: more options for boolean fields (true/false/t/f/yes/no/y/n)
 
 ## DONE
+  -- help: add help flag to other commands besides list
+  -- finish changing main run commands to take (args, flags)
   -- add flag for true/false (booklist search readby "Cameron Yee" -f --false
   -- add default messages for no search results found
   -- add deleteReadBy update function
